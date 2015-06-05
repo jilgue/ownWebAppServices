@@ -50,4 +50,60 @@ class Object {
 		// No tengo muy claro cuando puede pasar este caso:
 		var_dump("mal, muy mal");die;
 	}
+
+	/**
+	 * Magic method __call: PHP llama automáticamente a este método para todo método que no esté definido explícitamente
+	 * Lo usamos para definir getter y setters automáticamente
+	 */
+	public function __call($method, $arguments) {
+
+		if (!preg_match("#^(get|set|_get|_set)(.+)$#", $method, $matches)) {
+			// Método desconocido
+			return null;
+		}
+
+		$op = $matches[1];
+		$capturedField = $matches[2];
+
+		switch ($op) {
+		case "get":
+		case "_get":
+			if (count($arguments) != 0) {
+				return null;
+			}
+
+		return $this->_getter(lcfirst($capturedField));
+		break;
+
+		case "set":
+		case "_set":
+			if (count($arguments) != 1) {
+				return null;
+			}
+
+		return $this->_setter(lcfirst($capturedField), $arguments[0]);
+		break;
+
+		default:
+			return null;
+			break;
+		}
+	}
+
+	private function _getter($field) {
+
+		if (isset($this->$field)) {
+			return $this->$field;
+		}
+
+		return null;
+	}
+
+	private function _setter($field, $value) {
+
+		if (isset($this->$field)) {
+			return (bool) $this->$field = $value;
+		}
+		return null;
+	}
 }
