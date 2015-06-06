@@ -5,7 +5,7 @@
  */
 class DBTest1 extends DBObject {
 
-	var $fieldConfig = array("algo" => "\d");
+	var $objField = array("algo" => "\d");
 
 	static function stCreate() {
 		return;

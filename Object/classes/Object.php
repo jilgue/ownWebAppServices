@@ -6,7 +6,7 @@
 class Object {
 
 	// Campos publicos de la clase
-	var $fieldConfig = array();
+	var $objField = array();
 
 	protected function __construct($params = array()) {
 
@@ -20,9 +20,9 @@ class Object {
 			$this->$param = $value;
 
 			// Ademas guardamos si estan en la configuración del objeto
-			if (isset($this->fieldConfig[$param])
-			    && $this->_checkType($this->fieldConfig[$param], $value)) {
-				$this->fieldConfig[$param] = $value;
+			if (isset($this->objField[$param])
+			    && $this->_checkType($this->objField[$param], $value)) {
+				$this->objField[$param] = $value;
 			}
 		}
 	}
