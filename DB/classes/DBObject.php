@@ -18,7 +18,15 @@ abstract class DBObject extends Object {
 	private function _loadObjField() {
 
 		$dbFields = DBObject::_stGetTableFields($this::$table);
-		$this->objField = DBObject::stDBToObjFields($dbFields);
+
+		$ret = array();
+		foreach ($dbFields as $row) {
+
+			$field = $row["Field"];
+			$ret[DBObject::stDBFieldToObjField($field)] = array("type" => ".*");
+		}
+
+		$this->objField = $ret;
 	}
 
 	private function _loadFields($params) {
@@ -60,7 +68,7 @@ abstract class DBObject extends Object {
 
 	static function stObjFieldToDBField($field) {
 
-		if (!preg_match_all('/((?:^|[A-Z])[a-z]+)/', $field, $matches)) {
+		if (!preg_match_all('/((?:^|[A-Z])([a-z]|[0-9])+)/', $field, $matches)) {
 			return $field;
 		}
 
@@ -71,20 +79,21 @@ abstract class DBObject extends Object {
 		return substr($ret, 1);
 	}
 
-	static function stDBToObjFields($fields) {
+	static function stDBToObjFields($table) {
 
+		$fields = DBObject::_stGetTableFields($table);
 		$ret = array();
 		foreach ($fields as $row) {
 
 			$field = $row["Field"];
-			$ret[DBObject::stDBFieldToObjField($field)] = array("type" => ".*");
+			$ret[$field] = DBObject::stDBFieldToObjField($field);
 		}
 		return $ret;
 	}
 
-	static function stObjToDBFields($fields) {
+	static function stObjToDBFields($table) {
 
-		return array_flip(DBObject::stDBFieldToObjField($fields));
+		return array_flip(DBObject::stDBToObjFields($table));
 	}
 
 	static function stExist($objId, $class) {
@@ -94,7 +103,13 @@ abstract class DBObject extends Object {
 
 	function save() {
 
-		
+		$dbObj = array();
+		foreach ($this->objField as $field => $_value) {
+			$dbObj[DBObject::stObjFieldToDBField($field)] = $this->$field;
+		}
+
+		return (bool) DBMySQLConnection::stVirtualConstructor($this::$table)->updateObj($dbObj);
 	}
+
 	abstract static function stCreate();
 }

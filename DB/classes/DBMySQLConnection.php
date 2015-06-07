@@ -140,4 +140,24 @@ class DBMySQLConnection extends Object {
 		$id = reset($objId);
 		$field = DBObject::stObjFieldToDBField(key($objId));
 	}
+
+	function updateObj($dbObj) {
+
+		// TODO Separar bien el PK
+		$query = "UPDATE $this->table SET";
+
+		foreach ($dbObj as $field => $value) {
+			// Chapuza !!
+			if ($field == "image_id") {
+				continue;
+			}
+
+			$query = $query . " $field = '$value',";
+		}
+
+		$query = substr($query, 0, -1) . " WHERE " . key($dbObj) . " = " . reset($dbObj);
+
+		// Esto no me acaba de gustar
+		return $this->_nativeQuery($query);
+	}
 }
