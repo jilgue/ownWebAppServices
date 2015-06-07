@@ -21,13 +21,16 @@ class Object {
 			$this->$param = $value;
 
 			// Ademas guardamos si estan en la configuración del objeto
-			if (isset($this->objField[$param])) {
-				$this->objField[$param] = $value;
+			if (isset($this::$objField[$param])) {
+				$this::$objField[$param]["value"] = $value;
 				// TODO comprobaciones del type
 				//&& isset($this->objField[$param]["type"])
 				//&& $this->_checkType($this->objField[$param][["type"]], $value)) {
 			}
 		}
+
+		// Cuando ya tenemos todo ok, lo guardamos en this
+		$this->objField = $this::$objField;
 	}
 
 	private function _checkType($type, $value) {

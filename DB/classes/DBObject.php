@@ -23,16 +23,20 @@ abstract class DBObject extends Object {
 		foreach ($dbFields as $row) {
 
 			$field = $row["Field"];
-			$ret[DBObject::stDBFieldToObjField($field)] = array("type" => ".*");
+			$this::$objField[DBObject::stDBFieldToObjField($field)]["type"] = ".*";
 		}
-
-		$this->objField = $ret;
 	}
 
 	private function _loadFields($params) {
 
 		// El primer parámetro ha de ser el id, SIEMPRE
 		$objId = array_slice($params, 0, 1);
+
+		// Si no han pasado id no hay que cargar ningun dato
+		if ($objId == array(array())) {
+			return $params;
+		}
+
 		$class = $params["class"];
 
 		if(!DBObject::stExist($objId, $class)) {

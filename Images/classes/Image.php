@@ -10,6 +10,8 @@ class Image extends DBObject {
 	static $table = "images";
 
 	static function stCreate() {
-		return;
+
+		$image = Image::stVirtualConstructor();
+		var_dump($image);die;
 	}
 }
