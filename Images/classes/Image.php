@@ -11,7 +11,7 @@ class Image extends DBObject {
 
 	static function stCreate() {
 
-		$image = Image::stVirtualConstructor();
-		var_dump($image);die;
+		$objField = Image::stVirtualConstructor()->objField;
+		var_dump($objField);die;
 	}
 }

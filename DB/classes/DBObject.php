@@ -19,12 +19,50 @@ abstract class DBObject extends Object {
 
 		$dbFields = DBObject::_stGetTableFields($this::$table);
 
-		$ret = array();
+		// Cargamos los datos en this para que no se queden guardados
+		$this->objField = $this::$objField;
+
 		foreach ($dbFields as $row) {
 
 			$field = $row["Field"];
-			$this::$objField[DBObject::stDBFieldToObjField($field)]["type"] = ".*";
+			$type = $row["Type"];
+			$this->objField[DBObject::stDBFieldToObjField($field)]["type"] = $this->_getRegexDBType($type);
 		}
+	}
+
+	private function _getRegexDBType($type) {
+
+		if (preg_match_all("/[a-z]{0,}([0-9]{0,})/", $type, $matches)) {
+
+			// Primero nos llega el tipo
+			switch ($matches[0][0]) {
+			case "int":
+				$regex = "[0-9]";
+				break;
+			case "varchar":
+				$regex = ".";
+				break;
+			case "tinyint":
+				// Se usa para bool como no se puede hacer un preg match, hasta que se tenga datatype nos jodemos
+				return ".*";
+				break;
+			case "date":
+				return "\d{4}-\d{2}-\d{2}";
+				break;
+			default:
+				return ".*";
+				break;
+			}
+
+			// Quizá nos llegue la longitud
+			if (isset($matches[0][2])
+			    && $matches[0][2] != "") {
+				return $regex . "{1," . $matches[0][2] ."}";
+			}
+		}
+
+		// Raro raro, aceptamos cualquier cosa, supongo
+		return ".*";
 	}
 
 	private function _loadFields($params) {

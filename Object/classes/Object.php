@@ -16,21 +16,22 @@ class Object {
 
 	private function _autoloadParams($params) {
 
+		// Si no existe $this->objField es que ninguna clase hija lo ha tocado, lo cargamos nosotros
+		if (!isset($this->objField)) {
+			$this->objField = $this::$objField;
+		}
+
 		foreach ($params as $param => $value) {
 
 			$this->$param = $value;
 
 			// Ademas guardamos si estan en la configuración del objeto
-			if (isset($this::$objField[$param])) {
-				$this::$objField[$param]["value"] = $value;
-				// TODO comprobaciones del type
-				//&& isset($this->objField[$param]["type"])
-				//&& $this->_checkType($this->objField[$param][["type"]], $value)) {
+			if (isset($this->objField[$param])
+			    && isset($this->objField[$param]["type"])
+			    && $this->_checkType($this->objField[$param]["type"], $value)) {
+				$this->objField[$param]["value"] = $value;
 			}
 		}
-
-		// Cuando ya tenemos todo ok, lo guardamos en this
-		$this->objField = $this::$objField;
 	}
 
 	private function _checkType($type, $value) {
