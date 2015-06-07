@@ -6,7 +6,8 @@
 class Object {
 
 	// Campos publicos de la clase
-	var $objField = array();
+	static $objField = array();
+	var $params = array();
 
 	protected function __construct($params = array()) {
 
@@ -20,9 +21,11 @@ class Object {
 			$this->$param = $value;
 
 			// Ademas guardamos si estan en la configuración del objeto
-			if (isset($this->objField[$param])
-			    && $this->_checkType($this->objField[$param], $value)) {
+			if (isset($this->objField[$param])) {
 				$this->objField[$param] = $value;
+				// TODO comprobaciones del type
+				//&& isset($this->objField[$param]["type"])
+				//&& $this->_checkType($this->objField[$param][["type"]], $value)) {
 			}
 		}
 	}
@@ -38,17 +41,29 @@ class Object {
 		$args = func_get_args();
 		$numArgs = count($args);
 
+		// Añadimos cosas útiles a params y se lo pasamos a la clase que ha sido llamada
+		$params = array($params, "class" => $class);
+
 		if ($numArgs == 1) {
 			if (is_array($args[0])) {
 				// Ok, nos han llamado de la forma "normal": un único parámetro de tipo array
-				return new $class($args[0]);
+				return new $class(array_merge($args[0], $params));
 			}
 		} else if ($numArgs == 0) {
-			return new $class(array());
+			return new $class($params);
 		}
 
-		// No tengo muy claro cuando puede pasar este caso:
-		var_dump("mal, muy mal");die;
+		// Si solo nos han pasado un argumento suponemos que es el id del objeto si esta configurado en dicho objeto
+		if (count($args) == 1
+		    && isset(reset($class::$objField)["key"])
+		    && reset($class::$objField)["key"] == "id") {
+
+			$args = array(key($class::$objField) => reset($args));
+			return new $class(array_merge($args, $params));
+		}
+
+		// Si no es así pasamos todos los parametros y cada clase sabra que hacer con ellos, por el bien que le trae xD
+		return new $class(array_merge($args, $params));
 	}
 
 	/**

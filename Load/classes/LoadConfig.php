@@ -6,7 +6,7 @@
 class LoadConfig {
 
 	/**
-	 * Autocarga la clase $class
+	 * Obtiene la tabla con todas las rutas disponibles
 	 */
 	static function stGetDispatchTable() {
 
@@ -23,5 +23,30 @@ class LoadConfig {
 		}
 
 		return $ret;
+	}
+
+	/**
+	 * Obtiene el config de una clase
+	 */
+	static function stGetConfigClass($class) {
+
+
+		$cmd = "find . -name $class.php";
+
+		exec($cmd, $out);
+
+		if (count($out) != 1) {
+			var_dump("clase repetida, mal");die;
+		}
+
+		if (preg_match("@\./[[:alnum:]]{1,}@", reset($out), $match)) {
+			require reset($match) . "/conf/config.inc";
+			if (isset($config[$class])) {
+				return $config[$class];
+			}
+			return false;
+		}
+
+		return false;
 	}
 }
