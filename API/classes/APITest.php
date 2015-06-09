@@ -8,8 +8,8 @@ class APITest extends DispatchPage {
 
 	function getOutput() {
 
-		$image = Image::stVirtualConstructor("1");
-		var_dump($image);die;
+		//$image = Image::stVirtualConstructor("1");
+		//var_dump($image);die;
 		$imageId = Image::stCreate();
 		var_dump($imageId, $image);die;
 		echo $this->algo;

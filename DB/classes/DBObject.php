@@ -15,22 +15,26 @@ abstract class DBObject extends Object {
 		parent::__construct($params);
 	}
 
-	private function _loadObjField() {
+	static function stGetObjField($table) {
 
-		$dbFields = DBObject::_stGetTableFields($this::$table);
+		$dbFields = DBObject::_stGetTableFields($table);
 
-		// Cargamos los datos en this para que no se queden guardados
-		$this->objField = $this::$objField;
-
+		$ret = array();
 		foreach ($dbFields as $row) {
 
 			$field = $row["Field"];
 			$type = $row["Type"];
-			$this->objField[DBObject::stDBFieldToObjField($field)]["type"] = $this->_getRegexDBType($type);
+
+			$ret[DBObject::stDBFieldToObjField($field)]["type"] = DBObject::_stGetRegexDBType($type);
+
+			if ($row["Key"] == "PRI") {
+				$ret[DBObject::stDBFieldToObjField($field)]["key"] = "id";
+			}
 		}
+		return $ret;
 	}
 
-	private function _getRegexDBType($type) {
+	static private function _stGetRegexDBType($type) {
 
 		if (preg_match_all("/[a-z]{0,}([0-9]{0,})/", $type, $matches)) {
 
@@ -149,7 +153,7 @@ abstract class DBObject extends Object {
 		foreach ($this->objField as $field => $_value) {
 			$dbObj[DBObject::stObjFieldToDBField($field)] = $this->$field;
 		}
-
+		// TODO revisar que this table fijo que miente
 		return (bool) DBMySQLConnection::stVirtualConstructor($this::$table)->updateObj($dbObj);
 	}
 

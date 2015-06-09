@@ -5,13 +5,12 @@
  */
 class Image extends DBObject {
 
-	static $objField = array("imageId" => array("key" => "id"));
 	// ODMPPHE
 	static $table = "images";
 
 	static function stCreate() {
-
-		$objField = Image::stVirtualConstructor()->objField;
-		var_dump($objField);die;
+		var_dump(Image::$objField);die;
+		$image = Image::stVirtualConstructor("1");
+		var_dump($image);die;
 	}
 }

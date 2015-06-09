@@ -29,6 +29,11 @@ class LoadInit {
 
 		if ($classPath !== false) {
 			require_once $classPath;
+			// Si existe $class::$table es una clase de DBObject
+			if (isset($class::$table)) {
+				// Autocargamos los campos de $objField
+				$class::$objField = DBObject::stGetObjField($class::$table);
+			}
 		}
 	}
 
