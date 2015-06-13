@@ -8,9 +8,14 @@ class Image extends DBObject {
 	// ODMPPHE
 	static $table = "images";
 
-	static function stCreate() {
-		var_dump(Image::$objField);die;
-		$image = Image::stVirtualConstructor("1");
-		var_dump($image);die;
+	function getCreateDateDefaultValue($params) {
+
+		return date("Y-m-d", time());
 	}
+
+	function getUploadedDefaultValue($params) {
+
+		return "0";
+	}
+
 }

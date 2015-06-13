@@ -160,4 +160,30 @@ class DBMySQLConnection extends Object {
 		// Esto no me acaba de gustar
 		return $this->_nativeQuery($query);
 	}
+
+	function createObj($dbObj) {
+
+		$query = "INSERT INTO $this->table";
+
+		$rows = "";
+		$values = "";
+		$select = "";
+		foreach ($dbObj as $field => $value) {
+
+			$rows = $rows . $field . ",";
+			$values = $values . "'$value',";
+
+			// Preparamos el select para luego
+			$select = $select . "$field='$value' AND ";
+		}
+
+		$query = $query . " (" . substr($rows, 0, -1) . ") VALUES (" . substr($values, 0, -1) . ")";
+
+		// A partir de aquí no me acaba de gustar
+		if (!$this->_nativeQuery($query)) {
+			return false;
+		}
+
+		return mysqli_insert_id($this->link);
+	}
 }

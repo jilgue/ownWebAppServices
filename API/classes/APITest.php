@@ -8,10 +8,11 @@ class APITest extends DispatchPage {
 
 	function getOutput() {
 
-		//$image = Image::stVirtualConstructor("1");
-		//var_dump($image);die;
-		$imageId = Image::stCreate();
-		var_dump($imageId, $image);die;
+		$array = array("userImage" => "2",
+			       "nameImage" => "holaquetal",
+			       "md5Hash" => "asdfasdfsafsadfa");
+		$imageId = Image::stCreate($array);
+		var_dump($imageId);die;
 		echo $this->algo;
 	}
 }

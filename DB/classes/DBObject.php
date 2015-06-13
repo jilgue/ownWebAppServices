@@ -30,6 +30,18 @@ abstract class DBObject extends Object {
 			if ($row["Key"] == "PRI") {
 				$ret[DBObject::stDBFieldToObjField($field)]["key"] = "id";
 			}
+
+			if ($row["Null"] == "NO") {
+				$ret[DBObject::stDBFieldToObjField($field)]["optional"] = false;
+			} else {
+				$ret[DBObject::stDBFieldToObjField($field)]["optional"] = true;
+			}
+
+			// Default
+			$ret[DBObject::stDBFieldToObjField($field)]["default"] = $row["Default"];
+			if ($row["Extra"] == "auto_increment") {
+				$ret[DBObject::stDBFieldToObjField($field)]["default"] = "autoIncrement";
+			}
 		}
 		return $ret;
 	}
@@ -157,5 +169,59 @@ abstract class DBObject extends Object {
 		return (bool) DBMySQLConnection::stVirtualConstructor($this::$table)->updateObj($dbObj);
 	}
 
-	abstract static function stCreate();
+	static function stCreate($params) {
+
+		// Para ello no se debe de llamar NUNCA a DBObject::stCreate si no con la case del objeto a crear
+		$class = get_called_class();
+
+		$objField = $class::$objField;
+		var_dump($objField);
+		// Intanciamos la clase vacia para obtener los campos que no tengamos
+		$obj = $class::stVirtualConstructor();
+
+		$dbObj = array();
+		foreach ($objField as $field => $options) {
+
+			// Si no nos han pasado el valor, no tiene por defecto y no es auto increment
+			if (!isset($params[$field])
+			    && $options["default"] != "autoIncrement"
+			    && is_null($options["default"])
+			    ) {
+				$func = "get" . ucfirst($field).  "DefaultValue";
+
+				if (method_exists($obj, $func)) {
+
+					// Pasamos todos los parametros y ya el sabra que hacer y que no
+					$dbObj[DBObject::stObjFieldToDBField($field)] = $obj->$func($params);
+				} else {
+					var_dump("mal", $field);die;
+					return false;
+				}
+			}
+
+			if (isset($params[$field])) {
+				$dbObj[DBObject::stObjFieldToDBField($field)] = $params[$field];
+			}
+		}
+
+		$id = array_search("id", DBObject::_array_column($objField, "key"));
+
+		return array($id => DBMySQLConnection::stVirtualConstructor($class::$table)->createObj($dbObj));
+	}
+
+	/**
+	 * Este método es de php 5.5
+	 */
+	static private function _array_column($array, $columnKey) {
+
+		$ret = array();
+		foreach ($array as $key => $value) {
+
+			if (isset($value[$columnKey])) {
+				$ret[$key] = $value[$columnKey];
+			}
+		}
+
+		return $ret;
+	}
 }
