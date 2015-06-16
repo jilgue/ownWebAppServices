@@ -28,8 +28,9 @@ class LoadConfig {
 	/**
 	 * Obtiene el config de una clase
 	 */
-	static function stGetConfigClass($class) {
+	static function stGetConfigClass($class = "") {
 
+		$class = $class != "" ? $class : LoadConfig::stGetPreviousCalledClass();
 
 		$cmd = "find . -name $class.php";
 
@@ -48,5 +49,13 @@ class LoadConfig {
 		}
 
 		return false;
+	}
+
+	static function stGetPreviousCalledClass() {
+
+		$traces = debug_backtrace();
+
+		// 0 soy yo, 1 donde me llaman, 2 la que quiero saber xD
+		return $traces[2]["class"];
 	}
 }

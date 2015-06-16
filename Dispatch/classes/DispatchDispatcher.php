@@ -23,7 +23,7 @@ class DispatchDispatcher {
 
 			if (preg_match("@" . $urlMatch . "@", $_URL, $match) === 1) {
 				// TODO mandar a un output
-				$obj = call_user_func_array(array($config["class"], "stVirtualConstructor"), array(DispatchDispatcher::stGetUrlArg($URL, $config)));
+				$obj = call_user_func_array(array($config["class"], "stVirtualConstructor"), array(DispatchDispatcher::stGetUrlArg($URL, $urlMatch, $config["class"])));
 				return $obj->getOutput();
 			}
 		}
@@ -31,7 +31,9 @@ class DispatchDispatcher {
 		echo DispatchDispatcher::stPageNotFound();
 	}
 
-	static function stGetUrlArg($URL, $config) {
+	static function stGetUrlArg($URL, $urlMatch, $class) {
+
+		$URL = DispatchDispatcher::stRelativizeUrl($URL);
 
 		$ret = array();
 		foreach ($_GET as $param => $value) {
@@ -46,7 +48,28 @@ class DispatchDispatcher {
 			$ret[$param] = $value;
 		}
 
+		if (!preg_match_all("%<(.[^>]*)%", $urlMatch, $match)) {
+			// No seguimos
+			return $ret;
+		}
+
+		preg_match("%" . $urlMatch . "%", $URL, $match);
+
+		foreach ($match as $param => $value) {
+
+			if (isset($class::$objField[$param])) {
+				$ret[$param] = $value;
+			}
+		}
+
 		return $ret;
+	}
+
+	static function stRelativizeUrl($URL) {
+
+		$urlBase = LoadConfig::stGetConfigClass()["urlBase"];
+
+		return preg_replace("%$urlBase%", "", $URL);
 	}
 
 	static function stPageNotFound() {

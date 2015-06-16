@@ -10,7 +10,7 @@ class DBMySQLConnection extends Object {
 
 	protected function __construct($params = array()) {
 
-		$params = array_merge(array("link" => $this->_connect(LoadConfig::stGetConfigClass(__CLASS__))), $params);
+		$params = array_merge(array("link" => $this->_connect(LoadConfig::stGetConfigClass())), $params);
 		parent::__construct($params);
 	}
 
