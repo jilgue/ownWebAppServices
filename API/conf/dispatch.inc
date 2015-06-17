@@ -1,5 +1,4 @@
 <?php
 
-$config["(?<action>.*)/(?<object>.*)\.json"] = array("class" => "APITest",
-					       "optionalGETParams" => array("algo" => ".+")
-					       );
+$config["test/(?<action>.*)/(?<object>.*)\.json"] = array("class" => "APITest",
+							  );

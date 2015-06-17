@@ -8,9 +8,13 @@ class LoadInit {
 	/**
 	 * Autocarga la clase $class
 	 */
-	static function stGetClassPath($class) {
+	static function stGetClassPath($class, $caseInsensitive = false) {
 
-		$cmd = "find . -name " . $class . ".php";
+		if (!$caseInsensitive) {
+			$cmd = "find . -name " . $class . ".php";
+		} else {
+			$cmd = "find . -iname " . $class . ".php";
+		}
 
 		exec($cmd, $out);
 
@@ -18,6 +22,14 @@ class LoadInit {
 			return $out[0];
 		}
 		echo "$class dont exist";die;
+	}
+
+	static function stGetClassCaseInsensitive($class) {
+
+		$path = LoadInit::stGetClassPath($class, true);
+
+		preg_match("%/(.[^/]*)\.php%", $path, $match);
+		return $match[1];
 	}
 
 	/**

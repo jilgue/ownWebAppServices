@@ -8,14 +8,28 @@ class APITest extends DispatchPage {
 				 "object" => "\d",
 				 );
 
+	private function _processSignatureBook($action) {
+
+		$objField = SignatureBook::$objField;
+
+		$params = array();
+		foreach ($objField as $param => $conf) {
+
+			if (isset($this->$param)) {
+				$params[$param] = $this->$param;
+			}
+		}
+
+		return SignatureBook::stCreate($params);
+	}
+
 	function getOutput() {
 
-		var_dump($this);die;
-		$array = array("userImage" => "2",
-			       "nameImage" => "holaquetal",
-			       "md5Hash" => "asdfasdfsafsadfa");
-		$imageId = Image::stCreate($array);
-		var_dump($imageId);die;
-		echo $this->algo;
+		$class = LoadInit::stGetClassCaseInsensitive($this->object);
+
+		$func = "_process" . $class;
+		$ret = $this->$func($this->action);
+
+		echo json_encode($ret);
 	}
 }

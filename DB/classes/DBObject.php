@@ -175,7 +175,7 @@ abstract class DBObject extends Object {
 		$class = get_called_class();
 
 		$objField = $class::$objField;
-		var_dump($objField);
+
 		// Intanciamos la clase vacia para obtener los campos que no tengamos
 		$obj = $class::stVirtualConstructor();
 
