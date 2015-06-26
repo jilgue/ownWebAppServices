@@ -115,7 +115,7 @@ class Object {
 			return $this->$field;
 		}
 
-		return null;
+		return false;
 	}
 
 	private function _setter($field, $value) {
@@ -123,6 +123,17 @@ class Object {
 		if (isset($this->$field)) {
 			return (bool) $this->$field = $value;
 		}
-		return null;
+		return false;
+	}
+
+	function multiSetter($params) {
+
+		foreach ($params as $field => $value) {
+			if (!$this->_setter($field, $value)) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 }

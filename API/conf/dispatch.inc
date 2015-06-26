@@ -1,4 +1,5 @@
 <?php
 
-$config["test/(?<action>.*)/(?<object>.*)\.json"] = array("class" => "APITest",
-							  );
+$config["create/(?<object>.*)\.json"] = array("class" => "APICreteObjJSON",
+					      "method" => "POST",
+					      );

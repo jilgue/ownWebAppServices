@@ -93,7 +93,7 @@ abstract class DBObject extends Object {
 
 		$class = $params["class"];
 
-		if(!DBObject::stExist($objId, $class)) {
+		if(!$class::stExist($objId)) {
 			// No creo que esto sea bueno
 			return $params;
 		}
@@ -154,7 +154,10 @@ abstract class DBObject extends Object {
 		return array_flip(DBObject::stDBToObjFields($table));
 	}
 
-	static function stExist($objId, $class) {
+	static function stExist($objId) {
+
+		// Para ello no se debe de llamar NUNCA a DBObject::stExist si no con la clase del objeto a crear
+		$class = get_called_class();
 
 		return (bool) DBMySQLConnection::stVirtualConstructor($class::$table)->existObj($objId);
 	}
@@ -171,7 +174,7 @@ abstract class DBObject extends Object {
 
 	static function stCreate($params) {
 
-		// Para ello no se debe de llamar NUNCA a DBObject::stCreate si no con la case del objeto a crear
+		// Para ello no se debe de llamar NUNCA a DBObject::stCreate si no con la clase del objeto a crear
 		$class = get_called_class();
 
 		$objField = $class::$objField;
@@ -204,9 +207,35 @@ abstract class DBObject extends Object {
 			}
 		}
 
-		$id = array_search("id", DBObject::_array_column($objField, "key"));
+		return array(DBObject::stGetObjIdField($class) => DBMySQLConnection::stVirtualConstructor($class::$table)->createObj($dbObj));
+	}
 
-		return array($id => DBMySQLConnection::stVirtualConstructor($class::$table)->createObj($dbObj));
+	static function stUpdate($params) {
+
+		// Para ello no se debe de llamar NUNCA a DBObject::stUpdate si no con la clase del objeto a crear
+		$class = get_called_class();
+
+		$id = DBObject::stGetObjIdField($class);
+
+		$obj = $class::stVirtualConstructor($params[$id]);
+
+		// Quitamos el id
+		// No podemos quitarlo en la clase de objeto porque no tiene dateTypes
+		unset($params[$id]);
+
+		if (!$obj->multiSetter($params)
+		    || !$obj->save()) {
+			return false;
+		}
+
+		return true;
+	}
+
+	static function stGetObjIdField($class) {
+
+		$objField = $class::$objField;
+
+		return array_search("id", DBObject::_array_column($objField, "key"));
 	}
 
 	/**

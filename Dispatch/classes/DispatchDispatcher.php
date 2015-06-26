@@ -23,7 +23,7 @@ class DispatchDispatcher {
 
 			if (preg_match("@" . $urlMatch . "@", $_URL, $match) === 1) {
 				// TODO mandar a un output
-				$obj = call_user_func_array(array($config["class"], "stVirtualConstructor"), array(DispatchDispatcher::stGetUrlArg($URL, $urlMatch, $config["class"])));
+				$obj = call_user_func_array(array($config["class"], "stVirtualConstructor"), array(DispatchDispatcher::stGetUrlArg($URL, $urlMatch, $config)));
 				return $obj->getOutput();
 			}
 		}
@@ -31,12 +31,32 @@ class DispatchDispatcher {
 		echo DispatchDispatcher::stPageNotFound();
 	}
 
-	static function stGetUrlArg($URL, $urlMatch, $class) {
+	static function stGetUrlArg($URL, $urlMatch, $config) {
 
 		$URL = DispatchDispatcher::stRelativizeUrl($URL);
 
+		$class = $config["class"];
+
 		$ret = array();
-		foreach ($_GET as $param => $value) {
+		if (preg_match_all("%<(.[^>]*)%", $urlMatch, $match)) {
+
+			preg_match("%" . $urlMatch . "%", $URL, $match);
+
+			foreach ($match as $param => $value) {
+
+				if (isset($class::$objField[$param])) {
+					$ret[$param] = $value;
+				}
+			}
+		}
+
+		if (isset($config["method"])) {
+			$method = $config["method"] == "POST" ? $_POST : $_GET;
+		} else {
+			return $ret;
+		}
+
+		foreach ($method as $param => $value) {
 
 			// No soportamos page.html?myarray[]=1
 			if (is_array($value)) {
@@ -46,20 +66,6 @@ class DispatchDispatcher {
 			// TODO soporte para optionalGETParams y obligatoryGETParams
 
 			$ret[$param] = $value;
-		}
-
-		if (!preg_match_all("%<(.[^>]*)%", $urlMatch, $match)) {
-			// No seguimos
-			return $ret;
-		}
-
-		preg_match("%" . $urlMatch . "%", $URL, $match);
-
-		foreach ($match as $param => $value) {
-
-			if (isset($class::$objField[$param])) {
-				$ret[$param] = $value;
-			}
 		}
 
 		return $ret;
