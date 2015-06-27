@@ -2,7 +2,7 @@
 /**
  * Dispatching de URLs
  */
-class APICreteObjJSON extends DispatchPage {
+class APICreteObjJSONPage extends APIJSONPage {
 
 	static $objField = array("object" => "\d",
 				 );
@@ -24,22 +24,27 @@ class APICreteObjJSON extends DispatchPage {
 		if (isset($params[$id])) {
 
 			if ($class::stExist(array($id => $params[$id]))) {
-				return $class::stUpdate($params);
+				return (string) $class::stUpdate($params);
 			} else {
 				// Si no existe avisamos
-				return "Error";
+				$this->_setError("DONT_EXIST", "$id " . $params[$id] . " dont exist");
+				return "";
 			}
 		}
 
-		return $class::stCreate($params);
+		$ret = $class::stCreate($params);
+		if (is_array($ret)) {
+			return (string) $ret;
+		}
+
+		$this->_setError("MISING_PARAM", $ret);
+		return "";
 	}
 
-	function getOutput() {
+	protected function _getResponse() {
 
 		$class = LoadInit::stGetClassCaseInsensitive($this->object);
 
-		$ret = $this->_processCreate($class);
-
-		echo json_encode($ret);
+		return $this->_processCreate($class);
 	}
 }

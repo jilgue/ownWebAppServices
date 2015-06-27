@@ -1,5 +1,5 @@
 <?php
 
-$config["create/(?<object>.*)\.json"] = array("class" => "APICreteObjJSON",
+$config["create/(?<object>.*)\.json"] = array("class" => "APICreteObjJSONPage",
 					      "method" => "POST",
 					      );

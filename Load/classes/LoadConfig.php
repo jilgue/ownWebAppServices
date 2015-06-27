@@ -51,6 +51,32 @@ class LoadConfig {
 		return false;
 	}
 
+	/**
+	 * Obtiene el config de una clase
+	 */
+	static function stGetConfigVar($var, $class = "") {
+
+		$class = $class != "" ? $class : LoadConfig::stGetPreviousCalledClass();
+
+		$cmd = "find . -name $class.php";
+
+		exec($cmd, $out);
+
+		if (count($out) != 1) {
+			var_dump("clase repetida, mal");die;
+		}
+
+		if (preg_match("@\./[[:alnum:]]{1,}@", reset($out), $match)) {
+			require reset($match) . "/conf/config.inc";
+			if (isset($config[$var])) {
+				return $config[$var];
+			}
+			return false;
+		}
+
+		return false;
+	}
+
 	static function stGetPreviousCalledClass() {
 
 		$traces = debug_backtrace();

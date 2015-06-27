@@ -197,8 +197,7 @@ abstract class DBObject extends Object {
 					// Pasamos todos los parametros y ya el sabra que hacer y que no
 					$dbObj[DBObject::stObjFieldToDBField($field)] = $obj->$func($params);
 				} else {
-					var_dump("mal", $field);die;
-					return false;
+					return "Missing params $field";
 				}
 			}
 

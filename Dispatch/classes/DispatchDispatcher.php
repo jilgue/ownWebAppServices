@@ -24,7 +24,7 @@ class DispatchDispatcher {
 			if (preg_match("@" . $urlMatch . "@", $_URL, $match) === 1) {
 				// TODO mandar a un output
 				$obj = call_user_func_array(array($config["class"], "stVirtualConstructor"), array(DispatchDispatcher::stGetUrlArg($URL, $urlMatch, $config)));
-				return $obj->getOutput();
+				return $obj->printOutput();
 			}
 		}
 
