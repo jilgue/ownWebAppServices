@@ -20,6 +20,7 @@ class APICreteObjJSONPage extends APIJSONPage {
 		}
 
 		$id = DBObject::stGetObjIdField($class);
+
 		// Si nos pasan el id seguramente sea un update en lugar de un create
 		if (isset($params[$id])) {
 
@@ -34,7 +35,7 @@ class APICreteObjJSONPage extends APIJSONPage {
 
 		$ret = $class::stCreate($params);
 		if (is_array($ret)) {
-			return (string) $ret;
+			return $ret;
 		}
 
 		$this->_setError("MISING_PARAM", $ret);
