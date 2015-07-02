@@ -3,7 +3,7 @@
 /**
  * Clase objeto de imágenes
  */
-class Users extends DBObject {
+class User extends DBObject {
 
 	// ODMPPHE
 	static $table = "users";
