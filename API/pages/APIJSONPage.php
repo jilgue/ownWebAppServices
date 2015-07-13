@@ -13,33 +13,32 @@ abstract class APIJSONPage extends DispatchJSONPage {
 		parent::__construct($params);
 
 		// Securizamos las peticiones
-		$this->_securityRequest();
+		$this->_securityRequest($params);
 	}
 
-	private function _securityRequest() {
+	private function _securityRequest($params) {
 
 		$apiKey = "547cd75345cb937f69c76d9461cdf8f1";
 
-		if (!isset($this->token)) {
+		if (!isset($params["token"])) {
 
 			// Fuera
 			$this->_unauthorizedRequest("MISING_TOKEN");
 		}
 
-		$token = sha1($apiKey . LoadConfig::stGetConfigClass()["token"] . $this->object);
+		$token = sha1($apiKey . LoadConfig::stGetConfigClass()["token"] . $params["object"]);
 
-		if ($this->token != $token) {
+		if ($params["token"] != $token) {
 
 			// Fuera
 			$this->_unauthorizedRequest("WRONG_TOKEN");
 		}
-
-		return;
 	}
 
 	private function _unauthorizedRequest($error) {
 
 		$this->_setError($error, $error);
+
 		$this->printOutput();
 		die;
 	}
@@ -57,12 +56,11 @@ abstract class APIJSONPage extends DispatchJSONPage {
 
 	function _getOutput() {
 
-		$ret = array("response" => $this->_getResponse());
+		$ret = array();
+
+		$ret["response"] = $this->response == "" ? $this->_getResponse() : $this->response;
 
 		$ret = $this->error == "" ? $ret : array_merge($ret, array("error" => $this->error));
-
-		// Si tenemos el this reponse lo pisamos
-		$ret = $this->response == "" ? $ret : array_merge($ret, array("response" => $this->response));
 
 		$ret = array_merge($ret, array("status" => $this->status));
 
