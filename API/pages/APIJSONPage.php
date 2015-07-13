@@ -31,13 +31,13 @@ abstract class APIJSONPage extends DispatchJSONPage {
 		if ($params["token"] != $token) {
 
 			// Fuera
-			$this->_unauthorizedRequest("WRONG_TOKEN");
+			$this->_unauthorizedRequest("WRONG_TOKEN", $token);
 		}
 	}
 
-	private function _unauthorizedRequest($error) {
+	private function _unauthorizedRequest($error, $token = "") {
 
-		$this->_setError($error, $error);
+		$this->_setError($error, $error . " the token correct is " . $token);
 
 		$this->printOutput();
 		die;
@@ -58,7 +58,13 @@ abstract class APIJSONPage extends DispatchJSONPage {
 
 		$ret = array();
 
-		$ret["response"] = $this->response == "" ? $this->_getResponse() : $this->response;
+		// Si ya tenemos la respuesta no seguimos NOTA esto no me gusta una mierda asin
+		if ($this->response != "") {
+			$ret["response"] = $this->response;
+		} else {
+			$_ret = $this->_getResponse();
+			$ret["response"] =  $this->response == "" ? $_ret  : $this->response;
+		}
 
 		$ret = $this->error == "" ? $ret : array_merge($ret, array("error" => $this->error));
 
