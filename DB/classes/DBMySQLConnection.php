@@ -122,7 +122,8 @@ class DBMySQLConnection extends Object {
 
 		$this->_parseObjId($objId, $id, $field);
 
-		$query = "SELECT COUNT($field) FROM $this->table WHERE $field = $id";
+		$query = "SELECT COUNT($field) FROM $this->table WHERE $field = '$id'";
+
 		return $this->count($query);
 	}
 
