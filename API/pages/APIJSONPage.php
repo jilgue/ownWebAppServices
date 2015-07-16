@@ -58,13 +58,7 @@ abstract class APIJSONPage extends DispatchJSONPage {
 
 		$ret = array();
 
-		// Si ya tenemos la respuesta no seguimos NOTA esto no me gusta una mierda asin
-		if ($this->response != "") {
-			$ret["response"] = $this->response;
-		} else {
-			$_ret = $this->_getResponse();
-			$ret["response"] =  $this->response == "" ? $_ret  : $this->response;
-		}
+		$ret["response"] = $this->response == "" ? $this->_getResponse() : $this->response;
 
 		$ret = $this->error == "" ? $ret : array_merge($ret, array("error" => $this->error));
 

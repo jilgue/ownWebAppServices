@@ -46,6 +46,12 @@ class APICreteObjJSONPage extends APIJSONPage {
 
 		$class = LoadInit::stGetClassCaseInsensitive($this->object);
 
-		return $this->_processCreate($class);
+		$ret = $this->_processCreate($class);
+
+		if ($this->response != "") {
+			return $this->response;
+		}
+
+		return $ret;
 	}
 }
