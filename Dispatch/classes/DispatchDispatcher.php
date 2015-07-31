@@ -23,6 +23,7 @@ class DispatchDispatcher {
 
 			if (preg_match("@" . $urlMatch . "@", $_URL, $match) === 1) {
 				// TODO mandar a un output
+
 				$obj = call_user_func_array(array($config["class"], "stVirtualConstructor"), array(DispatchDispatcher::stGetUrlArg($URL, $urlMatch, $config)));
 				return $obj->printOutput();
 			}
@@ -51,7 +52,7 @@ class DispatchDispatcher {
 		}
 
 		if (isset($config["method"])) {
-			$method = $config["method"] == "POST" ? $_POST : $_GET;
+			$method = $config["method"];
 		} else {
 			return $ret;
 		}
@@ -59,7 +60,8 @@ class DispatchDispatcher {
 		foreach ($method as $param => $value) {
 
 			// No soportamos page.html?myarray[]=1
-			if (is_array($value)) {
+			if ($method != $_FILES
+			    && is_array($value)) {
 				continue;
 			}
 

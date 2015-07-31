@@ -1,5 +1,5 @@
 <?php
 
 $config["userlogin.json"] = array("class" => "UserLoginAPIJSONPage",
-				  "method" => "POST",
+				  "method" => $_POST,
 				  );
