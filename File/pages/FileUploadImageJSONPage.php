@@ -20,7 +20,7 @@ class FileUploadImageJSONPage extends APIJSONPage {
 		preg_match("/data:image\/([a-z]{1,});base64,/", $this->file->dataURL, $type);
 		$type = $type[1];
 		$data = base64_decode(str_replace('data:image/jpeg;base64,', '', $this->file->dataURL));
-		$file = "/tmp/" . time() . "-" . $this->idUser . "-webapp." . $type;
+		$file = "/var/www/public/" . time() . "-" . $this->idUser . "-webapp." . $type;
 		return file_put_contents($file, $data);
 	}
 }
