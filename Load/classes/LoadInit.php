@@ -53,4 +53,3 @@ class LoadInit {
 
 spl_autoload_register(array("LoadInit", "stAutoload"));
 
-DispatchDispatcher::stProcessRequest($_SERVER["REQUEST_URI"]);
