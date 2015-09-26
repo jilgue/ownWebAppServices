@@ -18,7 +18,7 @@ if (count($argv) == 1) {
 $class = $argv[1];
 
 // Pasamos al script el resto de argumentos
-$script = new $class(array_slice($argv, 2));
+$script = $class::stVirtualConstructor(array_slice($argv, 2));
 
 // RUN
 $script->run();
