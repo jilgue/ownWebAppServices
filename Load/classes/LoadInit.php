@@ -11,9 +11,9 @@ class LoadInit {
 	static function stGetClassPath($class, $caseInsensitive = false) {
 
 		if (!$caseInsensitive) {
-			$cmd = "find . -name " . $class . ".php";
+			$cmd = "find " . $GLOBALS["config"]["path"] . " -name " . $class . ".php";
 		} else {
-			$cmd = "find . -iname " . $class . ".php";
+			$cmd = "find " . $GLOBALS["config"]["path"] . " -iname " . $class . ".php";
 		}
 
 		exec($cmd, $out);
@@ -53,3 +53,5 @@ class LoadInit {
 
 spl_autoload_register(array("LoadInit", "stAutoload"));
 
+// Trapi autoload del config de Load
+require_once( dirname( __FILE__ ) . '/../conf/config.inc');

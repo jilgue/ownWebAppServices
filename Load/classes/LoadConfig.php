@@ -10,14 +10,14 @@ class LoadConfig {
 	 */
 	static function stGetDispatchTable() {
 
-		$cmd = "find . -name dispatch.inc";
+		$cmd = "find " . $GLOBALS["config"]["path"] . " -name dispatch.inc";
 
 		exec($cmd, $out);
 
 		$ret = array();
 		foreach ($out as $path) {
 
-			require $path;
+			require_once $path;
 
 			$ret = array_merge($ret, $config);
 		}
@@ -32,7 +32,7 @@ class LoadConfig {
 
 		$class = $class != "" ? $class : LoadConfig::stGetPreviousCalledClass();
 
-		$cmd = "find . -name $class.php";
+		$cmd = "find " . $GLOBALS["config"]["path"] . " -name $class.php";
 
 		exec($cmd, $out);
 
@@ -41,7 +41,7 @@ class LoadConfig {
 		}
 
 		if (preg_match("@\./[[:alnum:]]{1,}@", reset($out), $match)) {
-			require reset($match) . "/conf/config.inc";
+			require_once reset($match) . "/conf/config.inc";
 			if (isset($config[$class])) {
 				return $config[$class];
 			}
@@ -58,7 +58,7 @@ class LoadConfig {
 
 		$class = $class != "" ? $class : LoadConfig::stGetPreviousCalledClass();
 
-		$cmd = "find . -name $class.php";
+		$cmd = "find " . $GLOBALS["config"]["path"] . " -name $class.php";
 
 		exec($cmd, $out);
 
@@ -67,7 +67,7 @@ class LoadConfig {
 		}
 
 		if (preg_match("@\./[[:alnum:]]{1,}@", reset($out), $match)) {
-			require reset($match) . "/conf/config.inc";
+			require_once reset($match) . "/conf/config.inc";
 			if (isset($config[$var])) {
 				return $config[$var];
 			}
