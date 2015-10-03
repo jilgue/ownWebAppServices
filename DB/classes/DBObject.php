@@ -5,7 +5,6 @@
  */
 abstract class DBObject extends Object {
 
-	static $objField = array();
 	static $table;
 
 	protected function __construct($params = array()) {

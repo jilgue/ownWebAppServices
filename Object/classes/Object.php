@@ -8,10 +8,31 @@ class Object {
 	// Campos publicos de la clase
 	static $objField = array();
 	var $params = array();
+	static $hierarchy = array();
 
 	protected function __construct($params = array()) {
 
+		$this->_loadHierarchy();
+		$this->_mergeObjField();
 		$this->_autoloadParams($params);
+	}
+
+	private function _loadHierarchy() {
+
+		$class = get_class($this);
+		$this::$hierarchy = array($class);
+		while (($class = get_parent_class($class)) !== false) {
+			$this::$hierarchy[] = $class;
+		}
+		return;
+	}
+
+	private function _mergeObjField() {
+
+		foreach ($this::$hierarchy as $class) {
+			$this::$objField = array_merge($class::$objField, $this::$objField);
+		}
+		return;
 	}
 
 	private function _autoloadParams($params) {
@@ -19,6 +40,10 @@ class Object {
 		// Si no existe $this->objField es que ninguna clase hija lo ha tocado, lo cargamos nosotros
 		if (!isset($this->objField)) {
 			$this->objField = $this::$objField;
+		}
+
+		if (!isset($this->hierarchy)) {
+			$this->hierarchy = $this::$hierarchy;
 		}
 
 		foreach ($params as $param => $value) {
@@ -42,11 +67,9 @@ class Object {
 	static function stVirtualConstructor($params = array()) {
 
 		$class = get_called_class();
+
 		$args = func_get_args();
 		$numArgs = count($args);
-
-		// Añadimos cosas útiles a params y se lo pasamos a la clase que ha sido llamada
-		$params = array($params, "class" => $class);
 
 		if ($numArgs == 1) {
 			if (is_array($args[0])) {
