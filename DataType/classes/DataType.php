@@ -9,6 +9,7 @@ abstract class DataType extends Object {
 				 "type" => null,
 				 "DBType" => null,
 				 "regex" => null,
+				 "maxLength" => null,
 	);
 
 	function isValidValue($value) {
@@ -23,5 +24,15 @@ abstract class DataType extends Object {
 		}
 
 		return true;
+	}
+
+	function getDBColumnType($fieldConfig) {
+
+		return $this->_getDBColumnType($fieldConfig);
+	}
+
+	protected function _getDBColumnType($fieldConfig) {
+
+		return false;
 	}
 }

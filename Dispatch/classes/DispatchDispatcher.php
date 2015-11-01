@@ -7,13 +7,28 @@ class DispatchDispatcher {
 
 	public $request;
 
-	static function stProcessRequest($URL) {
+	private static function _stGetURLMatch($URL) {
 
 		$_URL = $URL;
+
 		// Limpiamos la url de los parametros get
 		if (preg_match("/(.*)\?/", $URL, $match) === 1) {
 			$_URL = $match[1];
 		}
+
+		// Si no termina en .algo añadimos una barra
+		if (preg_match("#(?:.(?!/))+\.(.*)#", $_URL, $match) === 1) {
+			// TODO controlar las terminaciones que permitimos
+		} else {
+			$_URL = $_URL . "/";
+		}
+
+		return $_URL;
+	}
+
+	static function stProcessRequest($URL) {
+
+		$_URL = DispatchDispatcher::_stGetURLMatch($URL);
 
 		$dispatchTable = LoadConfig::stGetDispatchTable();
 

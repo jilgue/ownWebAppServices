@@ -32,22 +32,14 @@ class LoadConfig {
 
 		$class = $class != "" ? $class : LoadConfig::stGetPreviousCalledClass();
 
-		$cmd = "find " . $GLOBALS["config"]["path"] . " -name $class.php";
-
-		exec($cmd, $out);
-
-		if (count($out) != 1) {
-			var_dump("clase repetida, mal");die;
-		}
-
-		if (preg_match("@\./[[:alnum:]]{1,}@", reset($out), $match)) {
-			require_once reset($match) . "/conf/config.inc";
-			if (isset($config[$class])) {
-				return $config[$class];
-			}
+		if (($path = LoadConfig::_stGetConfigPath($class)) === false) {
 			return false;
 		}
+		require_once $path;
 
+		if (isset($config[$class])) {
+			return $config[$class];
+		}
 		return false;
 	}
 
@@ -58,6 +50,46 @@ class LoadConfig {
 
 		$class = $class != "" ? $class : LoadConfig::stGetPreviousCalledClass();
 
+		if (($path = LoadConfig::_stGetConfigPath($class)) === false) {
+			return false;
+		}
+		require_once $path;
+
+		if (isset($config[$var])) {
+			return $config[$var];
+		}
+		return false;
+	}
+
+	/**
+	 * Obtiene el config de una clase
+	 */
+	static function stGetConfigVarClass($var, $class = "") {
+
+		$class = $class != "" ? $class : LoadConfig::stGetPreviousCalledClass();
+
+		// Quiza ya haya sido cargado
+		if (isset($GLOBALS["config"][$class][$var])) {
+			return $GLOBALS["config"][$class][$var];
+		}
+
+		if (($path = LoadConfig::_stGetConfigPath($class)) === false) {
+			return false;
+		}
+
+		require_once $path;
+
+		$GLOBALS["config"] = array_merge(isset($GLOBALS["config"]) ? $GLOBALS["config"] : array(), $config);
+
+		if (isset($config[$class][$var])) {
+			return $config[$class][$var];
+		}
+
+		return false;
+	}
+
+	private static function _stGetConfigPath($class) {
+
 		$cmd = "find " . $GLOBALS["config"]["path"] . " -name $class.php";
 
 		exec($cmd, $out);
@@ -67,11 +99,8 @@ class LoadConfig {
 		}
 
 		if (preg_match("@\./[[:alnum:]]{1,}@", reset($out), $match)) {
-			require_once reset($match) . "/conf/config.inc";
-			if (isset($config[$var])) {
-				return $config[$var];
-			}
-			return false;
+
+			return reset($match) . "/conf/config.inc";
 		}
 
 		return false;

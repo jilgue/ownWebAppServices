@@ -41,17 +41,29 @@ class LoadInit {
 
 		if ($classPath !== false) {
 			require_once $classPath;
-			// Si existe $class::$table es una clase de DBObject
-			if (isset($class::$table)) {
-				// Autocargamos los campos de $objField
-				$class::$objField = DBObject::stGetObjField($class::$table);
-			}
 		}
 	}
 
+	static function stPackagesLoad() {
+
+		if (isset($GLOBALS["packageList"])) {
+			return $GLOBALS["packageList"];
+		}
+
+		// Trapi autoload del config de Load
+		require_once( dirname( __FILE__ ) . '/../conf/config.inc');
+		$cmd = "ls " . $GLOBALS["config"]["path"];
+		exec($cmd, $out);
+
+		// Quitamos el último que será el index.php al ser el único archivo
+		array_pop($out);
+
+		// Guardamos en "cache" la lista de paquetes
+		$GLOBALS["packageList"] = $out;
+		return;
+	}
 }
 
 spl_autoload_register(array("LoadInit", "stAutoload"));
 
-// Trapi autoload del config de Load
-require_once( dirname( __FILE__ ) . '/../conf/config.inc');
+LoadInit::stPackagesLoad();

@@ -3,8 +3,6 @@
 /**
  *
  */
-class Test extends DBObject {
+class Test extends Object {
 
-	// ODMPPHE
-	static $table = "test";
 }

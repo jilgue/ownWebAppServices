@@ -9,4 +9,8 @@ class DataTypeString extends DataType {
 				 "regex" => ".*",
 	);
 
+	protected function _getDBColumnType($fieldConfig) {
+
+		return false;
+	}
 }

@@ -13,6 +13,7 @@ class Object {
 	protected function __construct($params = array()) {
 
 		$this->_loadHierarchy();
+		$this->_loadObjFieldConfig();
 		$this->_mergeObjField();
 		$this->_autoloadParams($params);
 	}
@@ -25,6 +26,17 @@ class Object {
 			$this::$hierarchy[] = $class;
 		}
 		return;
+	}
+
+	private function _loadObjFieldConfig() {
+
+		$class = reset($this::$hierarchy);
+
+		$config = LoadConfig::stGetConfigVarClass("objField", $class);
+
+		if ($config) {
+			$this::$objField = array_merge($config, $this::$objField);
+		}
 	}
 
 	private function _mergeObjField() {
