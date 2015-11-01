@@ -106,7 +106,6 @@ class Object {
 	}
 
 	/**
-	 * Magic method __call: PHP llama automáticamente a este método para todo método que no esté definido explícitamente
 	 * Lo usamos para definir getter y setters automáticamente
 	 */
 	public function __call($method, $arguments) {
