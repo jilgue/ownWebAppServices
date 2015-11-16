@@ -10,9 +10,9 @@ class TestPage extends DispatchPage {
 	function getOutput() {
 
 		$test = Test::stVirtualConstructor();
-		var_dump($test);die;
+		//var_dump($test);die;
 		$dt = DataTypeString::stVirtualConstructor();
-		var_dump($dt);die;
-		var_dump($dt->isValidValue("222asdf"), $dt->isValidValue(333), $dt->isValidValue(true));die;
+		var_dump($dt);
+		var_dump($dt->isValidValue_cached("222asdf"), $dt->isValidValue_cached("222asdf"), $dt->isValidValue(333), $dt->isValidValue(true));die;
 	}
 }

@@ -10,7 +10,7 @@ class LoadConfig {
 	 */
 	static function stGetDispatchTable() {
 
-		$cmd = "find " . $GLOBALS["config"]["path"] . " -name dispatch.inc";
+		$cmd = "find " . $GLOBALS["path"] . " -name dispatch.inc";
 
 		exec($cmd, $out);
 
@@ -90,7 +90,7 @@ class LoadConfig {
 
 	private static function _stGetConfigPath($class) {
 
-		$cmd = "find " . $GLOBALS["config"]["path"] . " -name $class.php";
+		$cmd = "find " . $GLOBALS["path"] . " -name $class.php";
 
 		exec($cmd, $out);
 

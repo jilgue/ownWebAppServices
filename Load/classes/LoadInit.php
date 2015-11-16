@@ -11,9 +11,9 @@ class LoadInit {
 	static function stGetClassPath($class, $caseInsensitive = false) {
 
 		if (!$caseInsensitive) {
-			$cmd = "find " . $GLOBALS["config"]["path"] . " -name " . $class . ".php";
+			$cmd = "find " . $GLOBALS["path"] . " -name " . $class . ".php";
 		} else {
-			$cmd = "find " . $GLOBALS["config"]["path"] . " -iname " . $class . ".php";
+			$cmd = "find " . $GLOBALS["path"] . " -iname " . $class . ".php";
 		}
 
 		exec($cmd, $out);
@@ -52,13 +52,15 @@ class LoadInit {
 
 		// Trapi autoload del config de Load
 		require_once( dirname( __FILE__ ) . '/../conf/config.inc');
-		$cmd = "ls " . $GLOBALS["config"]["path"];
+		$cmd = "ls " . $config["path"];
+
 		exec($cmd, $out);
 
 		// Quitamos el último que será el index.php al ser el único archivo
 		array_pop($out);
 
 		// Guardamos en "cache" la lista de paquetes
+		$GLOBALS["path"] = $config["path"];
 		$GLOBALS["packageList"] = $out;
 		return;
 	}

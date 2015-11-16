@@ -7,8 +7,9 @@ class Object {
 
 	// Campos publicos de la clase
 	static $objField = array();
-	var $params = array();
 	static $hierarchy = array();
+
+	var $params = array();
 
 	protected function __construct($params = array()) {
 
@@ -110,6 +111,11 @@ class Object {
 	 */
 	public function __call($method, $arguments) {
 
+		if (preg_match("#^(.+)_cached$#", $method, $matches)) {
+			// Funcion que va ir cacheada
+			return $this->_getCachedFuncion($matches[1], $arguments);
+		}
+
 		if (!preg_match("#^(get|set|_get|_set)(.+)$#", $method, $matches)) {
 			// Método desconocido
 			return null;
@@ -169,5 +175,22 @@ class Object {
 		}
 
 		return true;
+	}
+
+	private function _getCachedFuncion($function, $args) {
+
+		// TODO pasar en args el tiempo de cache y quitar de los args de la funcion
+		$cacheId = md5(serialize($function) . serialize($args));
+
+		// TODO cachear de verdad
+		if (isset($GLOBALS[$cacheId])) {
+			return $GLOBALS[$cacheId];
+		}
+
+		$ret = call_user_func_array(array($this, $function), $args);
+
+		$GLOBALS[$cacheId] = $ret;
+
+		return $ret;
 	}
 }
