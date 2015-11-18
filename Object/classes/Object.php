@@ -29,17 +29,6 @@ class Object {
 		return;
 	}
 
-	private function _loadObjFieldConfig() {
-
-		$class = reset($this::$hierarchy);
-
-		$config = LoadConfig::stGetConfigVarClass("objField", $class);
-
-		if ($config) {
-			$this::$objField = array_merge($config, $this::$objField);
-		}
-	}
-
 	private function _mergeObjField() {
 
 		foreach ($this::$hierarchy as $class) {
@@ -194,5 +183,10 @@ class Object {
 		$stCache[$cacheId] = $ret;
 
 		return $ret;
+	}
+
+	static function stGetFieldDataType($field) {
+
+		static::$objField;
 	}
 }

@@ -6,27 +6,45 @@
 class ObjectConfigurable extends Object {
 
 
-	static function stGetFieldsConfig() {
+	protected function __construct($params = array()) {
 
-		static $stCache = array();
+		$this->_loadObjFieldConfig();
 
-		$class = $calledClass = get_called_class();
+		parent::__construct($params);
+	}
 
-		if (isset($stCache[$calledClass])) {
-			return $stCache[$calledClass];
-		}
+	private function _loadObjFieldConfig() {
+
+		$class = get_class($this);
 
 		$ret = array();
 		do {
 			$objField = LoadConfig::stGetConfigVarClass("objField", $class);
 
 			if ($objField !== false) {
-				$ret = array_merge($objField, $ret);
+				$this::$objField = array_merge($objField, $this::$objField);
 			}
 
 		} while (($class = get_parent_class($class)) != false);
+	}
 
-		$stCache[$calledClass] = $ret;
+	static function stGetFieldsConfig() {
+
+		static $stCache = array();
+
+		$class = get_called_class();
+
+		if (isset($stCache[$class])) {
+			return $stCache[$class];
+		}
+
+		if ($class::$objField == array()) {
+			$classObj = $class::stVirtualConstructor();
+		}
+
+		$ret = $class::$objField;
+
+		$stCache[$class] = $ret;
 
 		return $ret;
 	}
