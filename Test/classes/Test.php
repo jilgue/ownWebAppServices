@@ -3,6 +3,6 @@
 /**
  *
  */
-class Test extends Object {
+class Test extends ObjectConfigurable {
 
 }
