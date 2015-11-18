@@ -213,6 +213,7 @@ class Object {
 			if ($objField !== false) {
 				$ret = array_merge($objField, $ret);
 			}
+
 		} while (($class = get_parent_class($class)) != false);
 
 		$stCache[$calledClass] = $ret;
