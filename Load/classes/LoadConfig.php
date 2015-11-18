@@ -30,9 +30,9 @@ class LoadConfig {
 	 */
 	static function stGetConfigClass($class = "") {
 
-		$class = $class != "" ? $class : LoadConfig::stGetPreviousCalledClass();
+		$class = $class != "" ? $class : static::stGetPreviousCalledClass();
 
-		if (($path = LoadConfig::_stGetConfigPath($class)) === false) {
+		if (($path = static::_stGetConfigPath($class)) === false) {
 			return false;
 		}
 		require_once $path;
@@ -48,9 +48,9 @@ class LoadConfig {
 	 */
 	static function stGetConfigVar($var, $class = "") {
 
-		$class = $class != "" ? $class : LoadConfig::stGetPreviousCalledClass();
+		$class = $class != "" ? $class : static::stGetPreviousCalledClass();
 
-		if (($path = LoadConfig::_stGetConfigPath($class)) === false) {
+		if (($path = static::_stGetConfigPath($class)) === false) {
 			return false;
 		}
 		require_once $path;
@@ -68,7 +68,7 @@ class LoadConfig {
 
 		static $stCache = array();
 
-		$class = $class != "" ? $class : LoadConfig::stGetPreviousCalledClass();
+		$class = $class != "" ? $class : static::stGetPreviousCalledClass();
 
 		// Quiza ya haya sido cargado
 		if (isset($stCache[$class][$var])) {

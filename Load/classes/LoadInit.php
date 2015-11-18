@@ -26,7 +26,7 @@ class LoadInit {
 
 	static function stGetClassCaseInsensitive($class) {
 
-		$path = LoadInit::stGetClassPath($class, true);
+		$path = static::stGetClassPath($class, true);
 
 		preg_match("%/(.[^/]*)\.php%", $path, $match);
 		return $match[1];
@@ -37,7 +37,7 @@ class LoadInit {
 	 */
 	static function stAutoload($class) {
 
-		$classPath = LoadInit::stGetClassPath($class);
+		$classPath = static::stGetClassPath($class);
 
 		if ($classPath !== false) {
 			require_once $classPath;
