@@ -46,22 +46,24 @@ class LoadInit {
 
 	static function stPackagesLoad() {
 
-		if (isset($GLOBALS["packageList"])) {
-			return $GLOBALS["packageList"];
+		static $stCache = array();
+
+		if (isset($stCache["packageList"])) {
+			return $stCache["packageList"];
 		}
 
 		// Trapi autoload del config de Load
 		require_once( dirname( __FILE__ ) . '/../conf/config.inc');
-		$cmd = "ls " . $config["path"];
+		$cmd = "ls -d */ " . $config["path"];
 
 		exec($cmd, $out);
 
 		// Quitamos el último que será el index.php al ser el único archivo
-		array_pop($out);
-
+		$out = array_slice($out, 1);
+		$out = preg_filter("/\//", "", $out);
 		// Guardamos en "cache" la lista de paquetes
 		$GLOBALS["path"] = $config["path"];
-		$GLOBALS["packageList"] = $out;
+		$stCache["packageList"] = $out;
 		return;
 	}
 }

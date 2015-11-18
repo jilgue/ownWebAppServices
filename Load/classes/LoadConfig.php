@@ -66,41 +66,57 @@ class LoadConfig {
 	 */
 	static function stGetConfigVarClass($var, $class = "") {
 
+		static $stCache = array();
+
 		$class = $class != "" ? $class : LoadConfig::stGetPreviousCalledClass();
 
 		// Quiza ya haya sido cargado
-		if (isset($GLOBALS["config"][$class][$var])) {
-			return $GLOBALS["config"][$class][$var];
+		if (isset($stCache[$class][$var])) {
+			return $stCache[$class][$var];
 		}
 
-		if (($path = LoadConfig::_stGetConfigPath($class)) === false) {
+		$path = LoadConfig::_stGetConfigPath($class);
+
+		if ($path === false) {
 			return false;
 		}
 
-		require_once $path;
-
-		$GLOBALS["config"] = array_merge(isset($GLOBALS["config"]) ? $GLOBALS["config"] : array(), $config);
+		$config = LoadConfig::_stRequireConfig($path);
 
 		if (isset($config[$class][$var])) {
+			$stCache[$class][$var] = $config[$class][$var];
 			return $config[$class][$var];
 		}
 
 		return false;
 	}
 
-	private static function _stGetConfigPath($class) {
+	private static function _stRequireConfig($path) {
 
-		$cmd = "find " . $GLOBALS["path"] . " -name $class.php";
+		static $stCache = array();
 
-		exec($cmd, $out);
-
-		if (count($out) != 1) {
-			var_dump("clase repetida, mal");die;
+		if (isset($stCache[$path])) {
+			return $stCache[$path];
 		}
 
-		if (preg_match("@\./[[:alnum:]]{1,}@", reset($out), $match)) {
+		require_once $path;
 
-			return reset($match) . "/conf/config.inc";
+		$stCache[$path] = $config;
+
+		return $config;
+	}
+
+	private static function _stGetConfigPath($class) {
+
+		foreach (LoadInit::stPackagesLoad() as $package) {
+
+			if (preg_match("/" . $package . "[[:alnum:]]{0,}/", $class, $match)) {
+
+				$path = $GLOBALS["path"] . $package . "/conf/config.inc";
+				if (is_file($path)) {
+					return $path;
+				}
+			}
 		}
 
 		return false;
@@ -108,7 +124,7 @@ class LoadConfig {
 
 	static function stGetPreviousCalledClass() {
 
-		$traces = debug_backtrace();
+		$traces = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 3);
 
 		// 0 soy yo, 1 donde me llaman, 2 la que quiero saber xD
 		return $traces[2]["class"];

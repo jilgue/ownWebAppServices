@@ -179,17 +179,43 @@ class Object {
 
 	private function _getCachedFuncion($function, $args) {
 
+		static $stCache = array();
+
 		// TODO pasar en args el tiempo de cache y quitar de los args de la funcion
 		$cacheId = md5(serialize($function) . serialize($args));
 
 		// TODO cachear de verdad
-		if (isset($GLOBALS[$cacheId])) {
-			return $GLOBALS[$cacheId];
+		if (isset($stCache[$cacheId])) {
+			return $stCache[$cacheId];
 		}
 
 		$ret = call_user_func_array(array($this, $function), $args);
 
-		$GLOBALS[$cacheId] = $ret;
+		$stCache[$cacheId] = $ret;
+
+		return $ret;
+	}
+
+	static function stGetFieldsConfig() {
+
+		static $stCache = array();
+
+		$class = $calledClass = get_called_class();
+
+		if (isset($stCache[$calledClass])) {
+			return $stCache[$calledClass];
+		}
+
+		$ret = array();
+		do {
+			$objField = LoadConfig::stGetConfigVarClass("objField", $class);
+
+			if ($objField !== false) {
+				$ret = array_merge($objField, $ret);
+			}
+		} while (($class = get_parent_class($class)) != false);
+
+		$stCache[$calledClass] = $ret;
 
 		return $ret;
 	}
