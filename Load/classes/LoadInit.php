@@ -54,17 +54,21 @@ class LoadInit {
 
 		// Trapi autoload del config de Load
 		require_once( dirname( __FILE__ ) . '/../conf/config.inc');
-		$cmd = "ls -d */ " . $config["path"];
+		$cmd = "ls -d " . $config["path"] . "*/";
 
 		exec($cmd, $out);
 
-		// Quitamos el último que será el index.php al ser el único archivo
-		$out = array_slice($out, 1);
-		$out = preg_filter("/\//", "", $out);
-		// Guardamos en "cache" la lista de paquetes
+		$ret = array();
+		foreach ($out as $path) {
+			preg_match("#.*/([A-z]{1,}[^/])#", $path, $match);
+			$ret[] = $match[1];
+		}
+
+		// Guardamos en "cache" la lista de paquetes y el path
 		$GLOBALS["path"] = $config["path"];
-		$stCache["packageList"] = $out;
-		return;
+		$stCache["packageList"] = $ret;
+
+		return $ret;
 	}
 }
 

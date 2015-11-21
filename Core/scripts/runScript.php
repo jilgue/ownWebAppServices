@@ -12,6 +12,8 @@ require_once( dirname( __FILE__ ) . '/../../Load/classes/LoadInit.php');
 if (count($argv) == 1) {
 	// TODO
 	Logs::stEcho("Lista de scripts:");
+	$scripts = Core::stGetClassesList("scripts");
+	var_dump($scripts);die;
 	die(0);
 }
 
