@@ -6,9 +6,15 @@
 
 class Logs {
 
-	static function stEcho($msg) {
+	static function stEchoDate($msg) {
 
 		echo date('Y/m/d H:i:s ') . "$msg\n";
+		return;
+	}
+
+	static function stEcho($msg) {
+
+		echo "$msg\n";
 		return;
 	}
 

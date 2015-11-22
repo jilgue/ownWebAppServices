@@ -10,10 +10,13 @@ require_once( dirname( __FILE__ ) . '/../../Load/classes/LoadInit.php');
 
 // No pasan ningun argumento sacamos la lista de scripts
 if (count($argv) == 1) {
-	// TODO
+
 	Logs::stEcho("Lista de scripts:");
 	$scripts = Core::stGetClassesList("scripts");
-	var_dump($scripts);die;
+	foreach ($scripts as $script) {
+		Logs::stEcho($script);
+	}
+
 	die(0);
 }
 
