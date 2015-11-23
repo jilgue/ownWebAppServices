@@ -14,7 +14,6 @@ class Object {
 	protected function __construct($params = array()) {
 
 		$this->_loadHierarchy();
-		$this->_loadObjFieldConfig();
 		$this->_mergeObjField();
 		$this->_autoloadParams($params);
 	}
@@ -24,7 +23,7 @@ class Object {
 		$class = get_class($this);
 		$this::$hierarchy = array($class);
 		while (($class = get_parent_class($class)) !== false) {
-			$this::$hierarchy[] = $class;
+			$class::$hierarchy[] = $class;
 		}
 		return;
 	}
@@ -32,7 +31,7 @@ class Object {
 	private function _mergeObjField() {
 
 		foreach ($this::$hierarchy as $class) {
-			$this::$objField = array_merge($class::$objField, $this::$objField);
+			$class::$objField = array_merge($class::$objField, $this::$objField);
 		}
 		return;
 	}
