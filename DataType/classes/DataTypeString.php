@@ -7,10 +7,6 @@ class DataTypeString extends DataType {
 	static $objField = array("type" => "is_string",
 				 "DBType" => "VARCHAR",
 				 "regex" => ".*",
+				 "maxLength" => 250,
 	);
-
-	protected function _getDBColumnType($fieldConfig) {
-
-		return false;
-	}
 }

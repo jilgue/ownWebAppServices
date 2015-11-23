@@ -26,13 +26,15 @@ abstract class DataType extends Object {
 		return true;
 	}
 
-	function getDBColumnType($fieldConfig) {
+	function getDBColumnType($field) {
 
-		return $this->_getDBColumnType($fieldConfig);
-	}
+		$params = array("DBType", "maxLength");
+		foreach ($params as $param) {
 
-	protected function _getDBColumnType($fieldConfig) {
+			$_param = isset($this->$param) ? $this->$param : $this::$objField["$param"];
+			${$param} = $_param;
+		}
 
-		return false;
+		return "`" . $field . "` " . $DBType . "(" . $maxLength . ") NOT NULL,";
 	}
 }
