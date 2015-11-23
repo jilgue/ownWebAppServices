@@ -3,7 +3,7 @@
 /**
  *
  */
-class ObjectConfigurable extends Object {
+abstract class ObjectConfigurable extends Object {
 
 
 	protected function __construct($params = array()) {
