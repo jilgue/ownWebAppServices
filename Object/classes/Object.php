@@ -21,7 +21,7 @@ class Object {
 	private function _loadHierarchy() {
 
 		$class = get_class($this);
-		$this::$hierarchy = array($class);
+		$class::$hierarchy = array($class);
 		while (($class = get_parent_class($class)) !== false) {
 			$class::$hierarchy[] = $class;
 		}
