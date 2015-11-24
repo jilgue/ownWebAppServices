@@ -40,6 +40,11 @@ class DBMySQLConnection extends Object {
 		return mysqli_query($link, $query);
 	}
 
+	function query($query) {
+
+		return $this->_nativeQuery($query);
+	}
+
 	function getTables() {
 
 		$resource = $this->_nativeQuery("SHOW TABLES");

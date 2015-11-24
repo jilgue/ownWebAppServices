@@ -24,19 +24,47 @@ class DBCreateSchema extends CoreScript {
 		return $ret;
 	}
 
+	private function _getColumnsSchema($config) {
+
+		$ret = array();
+		foreach ($config as $field => $fieldConfig) {
+
+			$dt = $fieldConfig["DT"];
+			$ret[] = DataTypeString::stVirtualConstructor($fieldConfig["DTParams"])->getDBColumnType($field);
+
+		}
+		return $ret;
+	}
+
+	private function _getTableSchema($config, $class) {
+
+		$table = "CREATE TABLE `" . strtolower($class) . "` ( \n";
+
+		$DBColumns = $this->_getColumnsSchema($config);
+
+		$table = $table . implode("\n", $DBColumns);
+
+		// TODO falta PF
+		$table = substr($table, 0 , -1);
+
+		$table = $table . "\n ) ENGINE=InnoDB DEFAULT CHARSET=latin1";
+
+		return $table;
+	}
+
 	private function _createSchema() {
 
 		$configClasses = $this->_getConfigClasses();
 
 		foreach ($configClasses as $class => $config) {
 
-			foreach ($config as $field => $fieldConfig) {
+			$table = $this->_getTableSchema($config, $class);
 
-				$dt = $fieldConfig["DT"];
-				$dbColumn = DataTypeString::stVirtualConstructor($fieldConfig["DTParams"])->getDBColumnType($field);
-				var_dump($dbColumn);
+			if (!DBMySQLConnection::stVirtualConstructor()->query($table)) {
+				// TODO warning
+				return false;
 			}
-		}die;
+		}
 	}
 
 	function run() {
