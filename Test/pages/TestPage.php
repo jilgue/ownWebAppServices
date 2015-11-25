@@ -12,7 +12,7 @@ class TestPage extends DispatchPage {
 		$config = Test::stGetFieldsConfig();
 		$test = Test::stVirtualConstructor();
 		var_dump($config, $test);die;
-		$dt = DataTypeString::stVirtualConstructor();
+		$dt = DataTypeStringDT::stVirtualConstructor();
 		var_dump($dt);
 		var_dump($dt->isValidValue_cached("222asdf"), $dt->isValidValue_cached("222asdf"), $dt->isValidValue(333), $dt->isValidValue(true));die;
 	}

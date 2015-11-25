@@ -30,7 +30,7 @@ class DBCreateSchema extends CoreScript {
 		foreach ($config as $field => $fieldConfig) {
 
 			$dt = $fieldConfig["DT"];
-			$ret[] = DataTypeString::stVirtualConstructor($fieldConfig["DTParams"])->getDBColumnType($field);
+			$ret[] = DataTypeStringDT::stVirtualConstructor($fieldConfig["DTParams"])->getDBColumnType($field);
 
 		}
 		return $ret;
@@ -42,7 +42,7 @@ class DBCreateSchema extends CoreScript {
 
 		$DBColumns = $this->_getColumnsSchema($config);
 
-		$table = $table . implode("\n", $DBColumns);
+		$table = $table . implode(",\n", $DBColumns);
 
 		// TODO falta PF
 		$table = substr($table, 0 , -1);
@@ -59,7 +59,7 @@ class DBCreateSchema extends CoreScript {
 		foreach ($configClasses as $class => $config) {
 
 			$table = $this->_getTableSchema($config, $class);
-
+			echo $table;
 			if (!DBMySQLConnection::stVirtualConstructor()->query($table)) {
 				// TODO warning
 				return false;

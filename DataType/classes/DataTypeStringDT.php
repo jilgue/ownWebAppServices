@@ -2,7 +2,7 @@
 /**
  *
  */
-class DataTypeString extends DataType {
+class DataTypeStringDT extends DataType {
 
 	static $objField = array("type" => "is_string",
 				 "DBType" => "VARCHAR",
