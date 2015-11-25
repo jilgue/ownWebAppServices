@@ -9,4 +9,18 @@ class DataTypeStringDT extends DataType {
 				 "regex" => ".*",
 				 "maxLength" => 250,
 	);
+
+
+	function isValidValue($value) {
+
+		if (parent::isValidValue($value) === false) {
+			return false;
+		}
+
+		if (strlen($value) > $this::$objField["maxLength"]) {
+			return false;
+		}
+
+		return true;
+	}
 }
