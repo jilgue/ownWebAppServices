@@ -30,10 +30,25 @@ class DBCreateSchema extends CoreScript {
 		foreach ($config as $field => $fieldConfig) {
 
 			$dt = $fieldConfig["DT"];
+
 			$ret[] = $dt::stVirtualConstructor($fieldConfig["DTParams"])->getDBColumnType($field);
 
 		}
 		return $ret;
+	}
+
+	private function _getPrimaryKey($config) {
+
+		$PK = array();
+		foreach ($config as $field => $fieldConfig) {
+
+			if ($fieldConfig["DT"] == "DataTypeIdDT"
+			    && $fieldConfig["DTParams"]["identifier"] == true) {
+				$PK[] = $field;
+			}
+		}
+
+		return "PRIMARY KEY (`" . implode(",", $PK) . "`)";
 	}
 
 	private function _getTableSchema($config, $class) {
@@ -42,10 +57,10 @@ class DBCreateSchema extends CoreScript {
 
 		$DBColumns = $this->_getColumnsSchema($config);
 
-		$table = $table . implode(",\n", $DBColumns);
+		// Añadimos la clave primaria
+		$DBColumns[] = $this->_getPrimaryKey($config);
 
-		// TODO falta PF
-		$table = substr($table, 0 , -1);
+		$table = $table . implode(",\n", $DBColumns);
 
 		$table = $table . "\n ) ENGINE=InnoDB DEFAULT CHARSET=latin1";
 

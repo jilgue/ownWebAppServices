@@ -9,6 +9,8 @@ class DataTypeIdDT extends DataType {
 				 "DBType" => "INT",
 				 "regex" => "\d+",
 				 "maxLength" => 5,
+				 "identifier" => array(false => "",
+						       true => "UNSIGNED NOT NULL AUTO_INCREMENT"),
 	);
 
 
@@ -23,5 +25,10 @@ class DataTypeIdDT extends DataType {
 		}
 
 		return true;
+	}
+
+	protected function _getDBColumnType($params) {
+
+		return "$params[DBType] ($params[maxLength]) $params[identifier]";
 	}
 }

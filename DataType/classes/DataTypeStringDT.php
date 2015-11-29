@@ -23,4 +23,9 @@ class DataTypeStringDT extends DataType {
 
 		return true;
 	}
+
+	protected function _getDBColumnType($params) {
+
+		return "$params[DBType] ($params[maxLength]) NOT NULL";
+	}
 }
