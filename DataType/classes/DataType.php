@@ -44,7 +44,6 @@ abstract class DataType extends Object {
 			}
 		}
 
-		//return  . $DBType . "(" . $maxLength . ") NOT NULL";
 		return "`" . $field . "` " . $this->_getDBColumnType($_params);
 	}
 }
