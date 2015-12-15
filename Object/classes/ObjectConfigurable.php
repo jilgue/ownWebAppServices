@@ -48,4 +48,36 @@ abstract class ObjectConfigurable extends Object {
 
 		return $ret;
 	}
+
+	static function stFilterFieldsConfig($filters) {
+
+		$fieldConfig = static::stGetFieldsConfig();
+
+		foreach ($fieldConfig as $field => $config) {
+			if (array_search($filters, $config)) {
+				return $field;
+			}
+		}
+
+		return false;
+	}
+
+	static function stVirtualConstructor($params = array()) {
+
+		$class = get_called_class();
+		$args = func_get_args();
+		$numArgs = count($args);
+
+		if ($numArgs == 1
+		    && !is_array($params)) {
+
+			$fieldId = $class::stFilterFieldsConfig(array("identifier" => true));
+
+			if ($fieldId !== false) {
+				$params = array($fieldId => $params);
+			}
+		}
+
+		return parent::stVirtualConstructor($params);
+	}
 }

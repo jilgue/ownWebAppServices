@@ -23,7 +23,7 @@ class Object {
 		$class = get_class($this);
 		$class::$hierarchy = array($class);
 		while (($class = get_parent_class($class)) !== false) {
-			$class::$hierarchy[] = $class;
+			$this::$hierarchy[] = $class;
 		}
 		return;
 	}
@@ -31,7 +31,7 @@ class Object {
 	private function _mergeObjField() {
 
 		foreach ($this::$hierarchy as $class) {
-			$class::$objField = array_merge($class::$objField, $this::$objField);
+			$this::$objField = array_merge($class::$objField, $this::$objField);
 		}
 		return;
 	}
@@ -68,26 +68,19 @@ class Object {
 	static function stVirtualConstructor($params = array()) {
 
 		$class = get_called_class();
-
 		$args = func_get_args();
 		$numArgs = count($args);
 
 		if ($numArgs == 1) {
 			if (is_array($args[0])) {
+
 				// Ok, nos han llamado de la forma "normal": un único parámetro de tipo array
 				return new $class(array_merge($args[0], $params));
 			}
-		} else if ($numArgs == 0) {
-			return new $class($params);
 		}
 
-		// Si solo nos han pasado un argumento suponemos que es el id del objeto si esta configurado en dicho objeto
-		if (count($args) == 1
-		    && isset(reset($class::$objField)["key"])
-		    && reset($class::$objField)["key"] == "id") {
-
-			$args = array(key($class::$objField) => reset($args));
-			return new $class(array_merge($args, $params));
+		if ($numArgs == 0) {
+			return new $class($params);
 		}
 
 		// Si no es así pasamos todos los parametros y cada clase sabra que hacer con ellos, por el bien que le trae xD
