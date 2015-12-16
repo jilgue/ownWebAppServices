@@ -49,7 +49,7 @@ abstract class ObjectConfigurable extends Object {
 		return $ret;
 	}
 
-	static function stFilterFieldsConfig($filters) {
+	static function stGetFieldFilteredConfig($filters) {
 
 		$fieldConfig = static::stGetFieldsConfig();
 
@@ -71,7 +71,7 @@ abstract class ObjectConfigurable extends Object {
 		if ($numArgs == 1
 		    && !is_array($params)) {
 
-			$fieldId = $class::stFilterFieldsConfig(array("identifier" => true));
+			$fieldId = $class::stGetFieldFilteredConfig(array("identifier" => true));
 
 			if ($fieldId !== false) {
 				$params = array($fieldId => $params);
