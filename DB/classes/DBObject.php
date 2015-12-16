@@ -73,7 +73,7 @@ abstract class DBObject extends ObjectPersistent {
 		return strtolower($class);
 	}
 
-	static function stExists($objId) {
+	private static function _stExists($objId) {
 
 		// Para ello no se debe de llamar NUNCA a DBObject::stExists si no con la clase del objeto a crear
 		$class = get_called_class();
@@ -81,17 +81,7 @@ abstract class DBObject extends ObjectPersistent {
 		return (bool) DBMySQLConnection::stVirtualConstructor($class::$table)->existObj($objId);
 	}
 
-	function save() {
-
-		$dbObj = array();
-		foreach ($this->objField as $field => $_value) {
-			$dbObj[DBObject::stObjFieldToDBField($field)] = $this->$field;
-		}
-		// TODO revisar que this table fijo que miente
-		return (bool) DBMySQLConnection::stVirtualConstructor($this::$table)->updateObj($dbObj);
-	}
-
-	static function stCreate($params) {
+	private static function _stCreate($params) {
 
 		// Para ello no se debe de llamar NUNCA a DBObject::stCreate si no con la clase del objeto a crear
 		$class = get_called_class();
@@ -128,7 +118,7 @@ abstract class DBObject extends ObjectPersistent {
 		return array(DBObject::stGetObjIdField($class) => DBMySQLConnection::stVirtualConstructor($class::$table)->createObj($dbObj));
 	}
 
-	static function stUpdate($params) {
+	private static function _stUpdate($params) {
 
 		// Para ello no se debe de llamar NUNCA a DBObject::stUpdate si no con la clase del objeto a crear
 		$class = get_called_class();
@@ -149,26 +139,20 @@ abstract class DBObject extends ObjectPersistent {
 		return true;
 	}
 
+	function save() {
+
+		$dbObj = array();
+		foreach ($this->objField as $field => $_value) {
+			$dbObj[DBObject::stObjFieldToDBField($field)] = $this->$field;
+		}
+		// TODO revisar que this table fijo que miente
+		return (bool) DBMySQLConnection::stVirtualConstructor($this::$table)->updateObj($dbObj);
+	}
+
 	static function stGetObjIdField($class) {
 
 		$objField = $class::$objField;
 
-		return array_search("id", DBObject::_array_column($objField, "key"));
-	}
-
-	/**
-	 * Este método es de php 5.5
-	 */
-	static private function _array_column($array, $columnKey) {
-
-		$ret = array();
-		foreach ($array as $key => $value) {
-
-			if (isset($value[$columnKey])) {
-				$ret[$key] = $value[$columnKey];
-			}
-		}
-
-		return $ret;
+		return array_search("id", array_column($objField, "key"));
 	}
 }
