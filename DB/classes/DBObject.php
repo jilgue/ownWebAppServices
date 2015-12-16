@@ -3,7 +3,7 @@
 /**
  * DB Object
  */
-abstract class DBObject extends ObjectConfigurable {
+abstract class DBObject extends ObjectPersistent {
 
 	static $table;
 
@@ -65,6 +65,12 @@ abstract class DBObject extends ObjectConfigurable {
 	static function stObjToDBFields($table) {
 
 		return array_flip(DBObject::stDBToObjFields($table));
+	}
+
+	static function stGetTableName($class) {
+
+		// TODO mirar si se hace de otra manera
+		return strtolower($class);
 	}
 
 	static function stExists($objId) {

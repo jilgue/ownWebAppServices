@@ -53,7 +53,7 @@ class DBCreateSchema extends CoreScript {
 
 	private function _getTableSchema($config, $class) {
 
-		$table = "CREATE TABLE `" . strtolower($class) . "` ( \n";
+		$table = "CREATE TABLE `" . DBObject::stGetTableName($class) . "` ( \n";
 
 		$DBColumns = $this->_getColumnsSchema($config);
 
