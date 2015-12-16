@@ -44,6 +44,12 @@ abstract class DBObject extends ObjectConfigurable {
 		return substr($ret, 1);
 	}
 
+	private static function _stGetTableFields($table) {
+
+		$conn = DBMySQLConnection::stVirtualConstructor(array("table" => $table));
+		return $conn->describeTableFields();
+	}
+
 	static function stDBToObjFields($table) {
 
 		$fields = DBObject::_stGetTableFields($table);
