@@ -24,7 +24,7 @@ class APICreteObjJSONPage extends APIJSONPage {
 		// Si nos pasan el id seguramente sea un update en lugar de un create
 		if (isset($params[$id])) {
 
-			if ($class::stExist(array($id => $params[$id]))) {
+			if ($class::stExists(array($id => $params[$id]))) {
 				return (string) $class::stUpdate($params);
 			} else {
 				// Si no existe avisamos

@@ -67,9 +67,9 @@ abstract class DBObject extends ObjectConfigurable {
 		return array_flip(DBObject::stDBToObjFields($table));
 	}
 
-	static function stExist($objId) {
+	static function stExists($objId) {
 
-		// Para ello no se debe de llamar NUNCA a DBObject::stExist si no con la clase del objeto a crear
+		// Para ello no se debe de llamar NUNCA a DBObject::stExists si no con la clase del objeto a crear
 		$class = get_called_class();
 
 		return (bool) DBMySQLConnection::stVirtualConstructor($class::$table)->existObj($objId);

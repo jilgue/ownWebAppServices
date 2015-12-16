@@ -3,6 +3,6 @@
 /**
  *
  */
-class Test extends ObjectConfigurable {
+class Test extends DBObject {
 
 }

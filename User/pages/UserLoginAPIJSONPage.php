@@ -11,10 +11,10 @@ class UserLoginAPIJSONPage extends APIJSONPage {
 	private function _login() {
 
 		// Permitimos el id y el email
-		if (User::stExist(array("idUser" => $this->user))) {
+		if (User::stExists(array("idUser" => $this->user))) {
 			$query = "SELECT password from " . User::$table . " where id_user=" . $this->user;
 			$queryId = "SELECT id_user from " . User::$table . " where id_user=" . $this->user;
-		} else if (User::stExist(array("email" => $this->user))) {
+		} else if (User::stExists(array("email" => $this->user))) {
 			$query = "SELECT password from " . User::$table . " where email='" . $this->user . "'";
 			$queryId = "SELECT id_user from " . User::$table . " where email='" . $this->user . "'";
 		} else {
