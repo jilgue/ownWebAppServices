@@ -50,13 +50,6 @@ class Object {
 		foreach ($params as $param => $value) {
 
 			$this->$param = $value;
-
-			// Ademas guardamos si estan en la configuración del objeto
-			if (isset($this->objField[$param])
-			    && isset($this->objField[$param]["type"])
-			    && $this->_checkType($this->objField[$param]["type"], $value)) {
-				$this->objField[$param]["value"] = $value;
-			}
 		}
 	}
 
