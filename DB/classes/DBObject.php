@@ -3,115 +3,19 @@
 /**
  * DB Object
  */
-abstract class DBObject extends Object {
+abstract class DBObject extends ObjectConfigurable {
 
 	static $table;
 
 	protected function __construct($params = array()) {
 
-		$this->_loadObjField();
-		$params = $this->_loadFields($params);
 		parent::__construct($params);
 	}
 
-	static function stGetObjField($table) {
-
-		$dbFields = DBObject::_stGetTableFields($table);
-
-		$ret = array();
-		foreach ($dbFields as $row) {
-
-			$field = $row["Field"];
-			$type = $row["Type"];
-
-			$ret[DBObject::stDBFieldToObjField($field)]["type"] = DBObject::_stGetRegexDBType($type);
-
-			if ($row["Key"] == "PRI") {
-				$ret[DBObject::stDBFieldToObjField($field)]["key"] = "id";
-			}
-
-			if ($row["Null"] == "NO") {
-				$ret[DBObject::stDBFieldToObjField($field)]["optional"] = false;
-			} else {
-				$ret[DBObject::stDBFieldToObjField($field)]["optional"] = true;
-			}
-
-			// Default
-			$ret[DBObject::stDBFieldToObjField($field)]["default"] = $row["Default"];
-			if ($row["Extra"] == "auto_increment") {
-				$ret[DBObject::stDBFieldToObjField($field)]["default"] = "autoIncrement";
-			}
-		}
-		return $ret;
-	}
-
-	static private function _stGetRegexDBType($type) {
-
-		if (preg_match_all("/[a-z]{0,}([0-9]{0,})/", $type, $matches)) {
-
-			// Primero nos llega el tipo
-			switch ($matches[0][0]) {
-			case "int":
-				$regex = "[0-9]";
-				break;
-			case "varchar":
-				$regex = ".";
-				break;
-			case "tinyint":
-				// Se usa para bool como no se puede hacer un preg match, hasta que se tenga datatype nos jodemos
-				return ".*";
-				break;
-			case "date":
-				return "\d{4}-\d{2}-\d{2}";
-				break;
-			default:
-				return ".*";
-				break;
-			}
-
-			// Quizá nos llegue la longitud
-			if (isset($matches[0][2])
-			    && $matches[0][2] != "") {
-				return $regex . "{1," . $matches[0][2] ."}";
-			}
-		}
-
-		// Raro raro, aceptamos cualquier cosa, supongo
-		return ".*";
-	}
-
-	private function _loadFields($params) {
-
-		// El primer parámetro ha de ser el id, SIEMPRE
-		$objId = array_slice($params, 0, 1);
-
-		// Si no han pasado id no hay que cargar ningun dato
-		if ($objId == array(array())) {
-			return $params;
-		}
-
-		$class = $params["class"];
-
-		if(!$class::stExist($objId)) {
-			// No creo que esto sea bueno
-			return $params;
-		}
-
-		$dbObj = DBMySQLConnection::stVirtualConstructor($class::$table)->getObj($objId);
-		$ret = array();
-		foreach ($dbObj as $field => $value) {
-			$ret[DBObject::stDBFieldToObjField($field)] = $value;
-		}
-
-		return array_merge($ret, $params);
-	}
-
-	private static function _stGetTableFields($table) {
-
-		$conn = DBMySQLConnection::stVirtualConstructor(array("table" => $table));
-		return $conn->describeTableFields();
-	}
-
+	/**
+	 * Convert the format a DB field (separation with low bar) to Obj field (camelcase)
+	 * Inverse to stObjFieldToDBField
+	 */
 	static function stDBFieldToObjField($field) {
 
 		$pieces = explode("_", $field);
@@ -123,6 +27,10 @@ abstract class DBObject extends Object {
 		return lcfirst($ret);
 	}
 
+	/**
+	 * Convert the format a Obj field to DB field
+	 * Inverse to stDBFieldToObjField
+	 */
 	static function stObjFieldToDBField($field) {
 
 		if (!preg_match_all('/((?:^|[A-Z])([a-z]|[0-9])+)/', $field, $matches)) {
