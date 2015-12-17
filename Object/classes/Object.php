@@ -77,7 +77,11 @@ class Object {
 		}
 
 		// Si no es así pasamos todos los parametros y cada clase sabra que hacer con ellos, por el bien que le trae xD
-		return new $class(array_merge($args, $params));
+		if (is_array($params)) {
+			return new $class(array_merge($args, $params));
+		}
+
+		return new $class($args);
 	}
 
 	/**

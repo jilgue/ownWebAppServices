@@ -38,9 +38,8 @@ abstract class ObjectConfigurable extends Object {
 			return $stCache[$class];
 		}
 
-		if ($class::$objField == array()) {
-			$classObj = $class::stVirtualConstructor();
-		}
+		// TODO mirar que cojones hace esto y si me mordera el maldito static
+		$classObj = $class::stVirtualConstructor();
 
 		$ret = $class::$objField;
 

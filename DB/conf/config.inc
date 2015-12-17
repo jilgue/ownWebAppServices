@@ -6,3 +6,6 @@ $config["DBMySQLConnection"] = array("host" => "localhost",
 				     "password" => "b4m",
 				     "database" => "bam_uploads",
 );
+
+$config["DBMySQLConnection"]["objField"]["table"] = array("DT" => "DataTypeIdDT",
+							  "DTParams" => array("identifier" => true));

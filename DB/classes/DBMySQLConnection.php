@@ -3,10 +3,10 @@
 /**
  * Conexion con mysqli
  */
-class DBMySQLConnection extends Object {
+class DBMySQLConnection extends ObjectConfigurable {
 
 	var $link;
-	static $objField = array("table" => array("key" => "id"));
+	var $table;
 
 	protected function __construct($params = array()) {
 

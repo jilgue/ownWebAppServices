@@ -73,7 +73,7 @@ abstract class DBObject extends ObjectPersistent {
 		return strtolower($class);
 	}
 
-	private static function _stExists($objId) {
+	protected static function _stExists($objId) {
 
 		// Para ello no se debe de llamar NUNCA a DBObject::stExists si no con la clase del objeto a crear
 		$class = get_called_class();
@@ -81,47 +81,24 @@ abstract class DBObject extends ObjectPersistent {
 		return (bool) DBMySQLConnection::stVirtualConstructor($class::$table)->existObj($objId);
 	}
 
-	private static function _stCreate($params) {
+	protected static function _stCreate($params) {
 
-		// Para ello no se debe de llamar NUNCA a DBObject::stCreate si no con la clase del objeto a crear
 		$class = get_called_class();
 
-		$objField = $class::$objField;
-
-		// Intanciamos la clase vacia para obtener los campos que no tengamos
-		$obj = $class::stVirtualConstructor();
-
 		$dbObj = array();
-		foreach ($objField as $field => $options) {
-
-			// Si no nos han pasado el valor, no tiene por defecto y no es auto increment
-			if (!isset($params[$field])
-			    && $options["default"] != "autoIncrement"
-			    && is_null($options["default"])
-			    ) {
-				$func = "get" . ucfirst($field).  "DefaultValue";
-
-				if (method_exists($obj, $func)) {
-
-					// Pasamos todos los parametros y ya el sabra que hacer y que no
-					$dbObj[DBObject::stObjFieldToDBField($field)] = $obj->$func($params);
-				} else {
-					return "Missing params $field";
-				}
-			}
+		foreach ($params as $field => $value) {
 
 			if (isset($params[$field])) {
-				$dbObj[DBObject::stObjFieldToDBField($field)] = $params[$field];
+				$dbObj[DBObject::stObjFieldToDBField($field)] = $value;
 			}
 		}
 
-		return array(DBObject::stGetObjIdField($class) => DBMySQLConnection::stVirtualConstructor($class::$table)->createObj($dbObj));
+		$id = $class::stGetFieldFilteredConfig(array("identifier" => true));
+		$table = DBObject::stGetTableName($class);
+		return array($id => DBMySQLConnection::stVirtualConstructor($table)->createObj($dbObj));
 	}
 
-	private static function _stUpdate($params) {
-
-		// Para ello no se debe de llamar NUNCA a DBObject::stUpdate si no con la clase del objeto a crear
-		$class = get_called_class();
+	protected static function _stUpdate($params) {
 
 		$id = DBObject::stGetObjIdField($class);
 

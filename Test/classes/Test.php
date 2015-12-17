@@ -3,6 +3,6 @@
 /**
  *
  */
-class Test extends ObjectPersistent {
+class Test extends DBObject {
 
 }
