@@ -17,7 +17,7 @@ class LoadConfig {
 		$ret = array();
 		foreach ($out as $path) {
 
-			require_once $path;
+			$config = LoadConfig::_stRequireConfig($path);
 
 			$ret = array_merge($ret, $config);
 		}
@@ -30,16 +30,19 @@ class LoadConfig {
 	 */
 	static function stGetConfigClass($class = "") {
 
-		$class = $class != "" ? $class : static::stGetPreviousCalledClass();
+		$class = $class != "" ? $class : LoadConfig::stGetPreviousCalledClass();
 
-		if (($path = static::_stGetConfigPath($class)) === false) {
+		if (($path = LoadConfig::_stGetConfigPath($class)) === false) {
 			return false;
 		}
-		require_once $path;
+
+		$config = LoadConfig::_stRequireConfig($path);
 
 		if (isset($config[$class])) {
+
 			return $config[$class];
 		}
+
 		return false;
 	}
 
@@ -50,10 +53,11 @@ class LoadConfig {
 
 		$class = $class != "" ? $class : static::stGetPreviousCalledClass();
 
-		if (($path = static::_stGetConfigPath($class)) === false) {
+		if (($path = LoadConfig::_stGetConfigPath($class)) === false) {
 			return false;
 		}
-		require_once $path;
+
+		$config = LoadConfig::_stRequireConfig($path);
 
 		if (isset($config[$var])) {
 			return $config[$var];
