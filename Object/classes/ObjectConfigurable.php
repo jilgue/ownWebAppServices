@@ -38,14 +38,11 @@ abstract class ObjectConfigurable extends Object {
 			return $stCache[$class];
 		}
 
-		// TODO mirar que cojones hace esto y si me mordera el maldito static
-		$classObj = $class::stVirtualConstructor();
+		$objField = LoadConfig::stGetConfigVarClass("objField", $class);
 
-		$ret = $class::$objField;
+		$stCache[$class] = $objField;
 
-		$stCache[$class] = $ret;
-
-		return $ret;
+		return $objField;
 	}
 
 	static function stGetFieldFilteredConfig($filters) {

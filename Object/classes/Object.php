@@ -3,11 +3,12 @@
 /**
  * Clase objecto
  */
-class Object {
+abstract class Object {
 
 	// Campos publicos de la clase
-	static $objField = array();
+	// TODO son publicos pero se comparten entre clases hermanas por lo que no tiene sentido, hay que pensar como hacer esto de otra manera...
 	static $hierarchy = array();
+	static $objField = array();
 
 	var $params = array();
 
