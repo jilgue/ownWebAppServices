@@ -10,7 +10,7 @@ class TestPage extends DispatchPage {
 		$params = array("campo1" => "hola",
 				"campo2" => "que tal");
 		//$test = Test::stCreate($params);
-		$test = Test::stExists(10);
+		$test = Test::stVirtualConstructor(1);
 		var_dump($test);die;
 	}
 }

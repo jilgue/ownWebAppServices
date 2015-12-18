@@ -10,6 +10,27 @@ abstract class DBObject extends ObjectPersistent {
 	protected function __construct($params = array()) {
 
 		parent::__construct($params);
+
+		$this->_loadObj();
+	}
+
+	private function _loadObj() {
+
+		$fieldId = static::stGetFieldFilteredConfig(array("identifier" => true));
+
+		// Si tenemos el id cargado y existe cargamos el resto de sus datos
+		if (isset($this->$fieldId)
+		    && static::stExists($this->$fieldId)) {
+
+			$table = DBObject::stGetTableName(get_class($this));
+
+			$dbObj = DBMySQLConnection::stVirtualConstructor($table)->getObj(array($fieldId => $this->$fieldId));
+
+			$fields = DBObject::stDBToObjFields($table);
+			foreach ($dbObj as $dbField => $data) {
+				$this->$fields[$dbField] = $data;
+			}
+		}
 	}
 
 	/**

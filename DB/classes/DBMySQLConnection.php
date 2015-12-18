@@ -125,7 +125,6 @@ class DBMySQLConnection extends ObjectConfigurable {
 
 	function existObj($objId) {
 
-
 		$field = key($objId);
 		$id = current($objId);
 
@@ -136,7 +135,8 @@ class DBMySQLConnection extends ObjectConfigurable {
 
 	function getObj($objId) {
 
-		$this->_parseObjId($objId, $id, $field);
+		$field = key($objId);
+		$id = current($objId);
 
 		$query = "SELECT * FROM $this->table WHERE $field = $id";
 
