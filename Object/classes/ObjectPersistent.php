@@ -29,7 +29,8 @@ abstract class ObjectPersistent extends ObjectConfigurable {
 
 	static function stExists($objId) {
 
-		return ObjectPersistent::_stExists($objId);
+		// TODO validate params
+		return static::_stExists($objId);
 	}
 
 	abstract protected static function _stCreate($params);

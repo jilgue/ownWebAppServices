@@ -78,7 +78,11 @@ abstract class DBObject extends ObjectPersistent {
 		// Para ello no se debe de llamar NUNCA a DBObject::stExists si no con la clase del objeto a crear
 		$class = get_called_class();
 
-		return (bool) DBMySQLConnection::stVirtualConstructor($class::$table)->existObj($objId);
+		$fieldId = $class::stGetFieldFilteredConfig(array("identifier" => true));
+
+		$table = DBObject::stGetTableName($class);
+
+		return (bool) DBMySQLConnection::stVirtualConstructor($table)->existObj(array($fieldId => $objId));
 	}
 
 	protected static function _stCreate($params) {

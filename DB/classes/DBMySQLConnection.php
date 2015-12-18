@@ -125,7 +125,9 @@ class DBMySQLConnection extends ObjectConfigurable {
 
 	function existObj($objId) {
 
-		$this->_parseObjId($objId, $id, $field);
+
+		$field = key($objId);
+		$id = current($objId);
 
 		$query = "SELECT COUNT($field) FROM $this->table WHERE $field = '$id'";
 
@@ -139,12 +141,6 @@ class DBMySQLConnection extends ObjectConfigurable {
 		$query = "SELECT * FROM $this->table WHERE $field = $id";
 
 		return $this->select($query);
-	}
-
-	private function _parseObjId($objId, & $id, & $field) {
-
-		$id = reset($objId);
-		$field = DBObject::stObjFieldToDBField(key($objId));
 	}
 
 	function updateObj($dbObj) {
