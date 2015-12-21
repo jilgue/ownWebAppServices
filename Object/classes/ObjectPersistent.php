@@ -7,23 +7,7 @@ abstract class ObjectPersistent extends ObjectConfigurable {
 
 	static function stGetValidCreateParams($class) {
 
-		$fieldConfig = $class::stGetFieldsConfig();
-
-		// TRAPI
-		$invalidCreateDTParams = array(array("identifier" => true));
-
-		$invalidCreateParams = array();
-		foreach ($fieldConfig as $field => $config) {
-
-			foreach ($invalidCreateDTParams as $invalidCreateDTParam) {
-
-				if (array_search($invalidCreateDTParam, $config)  !== false) {
-					$invalidCreateParams[] = $field;
-				}
-			}
-		}
-
-		return array_diff(array_keys($fieldConfig), $invalidCreateParams);
+		return ObjectConfigurable::_stExcludeConfigParams($class, array(array("identifier" => true)));
 	}
 
 	private static function stIsValidParamsValues($class, $params) {
@@ -82,5 +66,29 @@ abstract class ObjectPersistent extends ObjectConfigurable {
 	static function stUpdate($params) {
 
 		return ObjectPersistent::_stUpdate($params);
+	}
+
+	abstract function _save();
+
+	function save() {
+
+		$storedParams = $this->_getStoredParams();
+
+		if (!ObjectPersistent::stIsValidParamsValues(get_class($this), $storedParams)) {
+			// TODO warning y crear error
+			return false;
+		}
+
+		return $this->_save();
+	}
+
+	protected function _getStoredParams() {
+
+		$storedParams = ObjectConfigurable::_stExcludeConfigParams(get_class($this), array(array("identifier" => true)));
+		$ret = array();
+		foreach ($storedParams as $storedParam) {
+			$ret[$storedParam] = $this->$storedParam;
+		}
+		return $ret;
 	}
 }

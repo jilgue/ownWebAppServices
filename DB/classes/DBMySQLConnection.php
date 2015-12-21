@@ -131,7 +131,11 @@ class DBMySQLConnection extends ObjectConfigurable {
 		return $this->select($query);
 	}
 
-	function updateObj($dbObj) {
+	function updateObj($dbObj, $objId) {
+
+		// TRAPI
+		$fieldId = key($objId);
+		$id = current($objId);
 
 		$query = "UPDATE $this->table SET";
 
@@ -140,7 +144,7 @@ class DBMySQLConnection extends ObjectConfigurable {
 			$query = $query . " $field = '$value',";
 		}
 
-		$query = substr($query, 0, -1) . " WHERE " . key($dbObj) . " = " . reset($dbObj);
+		$query = substr($query, 0, -1) . " WHERE $fieldId = $id";
 
 		// Esto no me acaba de gustar
 		return $this->_nativeQuery($query);

@@ -58,6 +58,24 @@ abstract class ObjectConfigurable extends Object {
 		return false;
 	}
 
+	protected static function _stExcludeConfigParams($class, $filters) {
+
+		$fieldConfig = $class::stGetFieldsConfig();
+
+		$excludeParams = array();
+		foreach ($fieldConfig as $field => $config) {
+
+			foreach ($filters as $filter) {
+
+				if (array_search($filter, $config)  !== false) {
+					$excludeParams[] = $field;
+				}
+			}
+		}
+
+		return array_diff(array_keys($fieldConfig), $excludeParams);
+	}
+
 	static function stVirtualConstructor($params = array()) {
 
 		$class = get_called_class();

@@ -141,18 +141,27 @@ abstract class DBObject extends ObjectPersistent {
 		return true;
 	}
 
-	function save() {
+	function _save() {
+
+		$class = get_called_class();
+
+		$id = $class::stGetFieldFilteredConfig(array("identifier" => true));
+		$objId = array($id => $this->$id);
 
 		$dbObj = array();
-		foreach ($this->objField as $field => $_value) {
-			$dbObj[DBObject::stObjFieldToDBField($field)] = $this->$field;
+
+		// TODO usar stObjToDBFields
+		foreach ($this->_getStoredParams() as $field => $value) {
+			$dbObj[DBObject::stObjFieldToDBField($field)] = $value;
 		}
-		// TODO revisar que this table fijo que miente
-		return (bool) DBMySQLConnection::stVirtualConstructor($this::$table)->updateObj($dbObj);
+
+		$table = DBObject::stGetTableName($class);
+		return (bool) DBMySQLConnection::stVirtualConstructor($table)->updateObj($dbObj, $objId);
 	}
 
 	static function stGetObjIdField($class) {
 
+		// TODO mal !! $class::$objField; miente
 		$objField = $class::$objField;
 
 		return array_search("id", array_column($objField, "key"));
