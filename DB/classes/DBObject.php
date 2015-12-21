@@ -123,24 +123,6 @@ abstract class DBObject extends ObjectPersistent {
 		return array($id => DBMySQLConnection::stVirtualConstructor($table)->createObj($dbObj));
 	}
 
-	protected static function _stUpdate($params) {
-
-		$id = DBObject::stGetObjIdField($class);
-
-		$obj = $class::stVirtualConstructor($params[$id]);
-
-		// Quitamos el id
-		// No podemos quitarlo en la clase de objeto porque no tiene dateTypes
-		unset($params[$id]);
-
-		if (!$obj->multiSetter($params)
-		    || !$obj->save()) {
-			return false;
-		}
-
-		return true;
-	}
-
 	function _save() {
 
 		$class = get_called_class();
@@ -157,13 +139,5 @@ abstract class DBObject extends ObjectPersistent {
 
 		$table = DBObject::stGetTableName($class);
 		return (bool) DBMySQLConnection::stVirtualConstructor($table)->updateObj($dbObj, $objId);
-	}
-
-	static function stGetObjIdField($class) {
-
-		// TODO mal !! $class::$objField; miente
-		$objField = $class::$objField;
-
-		return array_search("id", array_column($objField, "key"));
 	}
 }

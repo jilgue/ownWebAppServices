@@ -61,11 +61,16 @@ abstract class ObjectPersistent extends ObjectConfigurable {
 		return static::_stCreate($params);
 	}
 
-	abstract protected static function _stUpdate($params);
+	static function stUpdate($fieldId, $params) {
 
-	static function stUpdate($params) {
+		$obj = static::stVirtualConstructor($fieldId);
 
-		return ObjectPersistent::_stUpdate($params);
+		if (!$obj->multiSetter($params)
+		    || !$obj->save()) {
+			return false;
+		}
+
+		return true;
 	}
 
 	abstract function _save();
