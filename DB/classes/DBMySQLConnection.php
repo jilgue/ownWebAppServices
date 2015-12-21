@@ -18,10 +18,10 @@ class DBMySQLConnection extends ObjectConfigurable {
 
 		$port = isset($config["port"]) ? $config["port"] : null;
 
-		$ret = mysqli_connect($config["host"], $config["user"], $config["password"], $config["database"], $port);
+		$ret = new mysqli($config["host"], $config["user"], $config["password"], $config["database"], $port);
 
 		if (!$ret) {
-			var_dump("No se pudo conectar a la base de datos");die;
+			Logs::stFatal("Can't connet to database");
 		}
 
 		return $ret;
@@ -36,8 +36,8 @@ class DBMySQLConnection extends ObjectConfigurable {
 		if (!$link) {
 			$link = $this->link;
 		}
-
-		return mysqli_query($link, $query);
+		// TODO errores
+		return $link->query($query);
 	}
 
 	function query($query) {
@@ -82,18 +82,6 @@ class DBMySQLConnection extends ObjectConfigurable {
 		return $ret;
 	}
 
-	private function _getFieldId() {
-
-		$desc = $this->describeTableFields();
-		foreach ($desc as $row) {
-
-			if ($row["Key"] = "PRI") {
-				return $row["Field"];
-			}
-		}
-		return null;
-	}
-
 	function count($query) {
 
 		$resource = $this->_nativeQuery($query);
@@ -113,7 +101,7 @@ class DBMySQLConnection extends ObjectConfigurable {
 		}
 
 		$ret = array();
-		while ($row = mysqli_fetch_assoc($resource)) {
+		while ($row = $resource->fetch_assoc()) {
 			$ret[] = $row;
 		}
 
