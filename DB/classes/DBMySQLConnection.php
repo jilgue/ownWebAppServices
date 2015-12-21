@@ -111,7 +111,6 @@ class DBMySQLConnection extends ObjectConfigurable {
 		return $ret[0];
 	}
 
-
 	private function _getIdParams(& $fieldId, & $valueId, $objId = array()) {
 
 		if (!is_array($objId)) {
