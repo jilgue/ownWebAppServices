@@ -30,6 +30,16 @@ abstract class ObjectPersistent extends ObjectConfigurable {
 		return true;
 	}
 
+	protected function _getStoredParams() {
+
+		$storedParams = ObjectConfigurable::_stExcludeConfigParams(get_class($this), array(array("identifier" => true)));
+		$ret = array();
+		foreach ($storedParams as $storedParam) {
+			$ret[$storedParam] = $this->$storedParam;
+		}
+		return $ret;
+	}
+
 	abstract protected static function _stExists($objId);
 
 	static function stExists($objId) {
@@ -73,7 +83,7 @@ abstract class ObjectPersistent extends ObjectConfigurable {
 		return true;
 	}
 
-	abstract function _save();
+	abstract protected function _save();
 
 	function save() {
 
@@ -87,13 +97,10 @@ abstract class ObjectPersistent extends ObjectConfigurable {
 		return $this->_save();
 	}
 
-	protected function _getStoredParams() {
+	abstract protected function _delete();
 
-		$storedParams = ObjectConfigurable::_stExcludeConfigParams(get_class($this), array(array("identifier" => true)));
-		$ret = array();
-		foreach ($storedParams as $storedParam) {
-			$ret[$storedParam] = $this->$storedParam;
-		}
-		return $ret;
+	function delete() {
+
+		return $this->_delete();
 	}
 }

@@ -123,7 +123,7 @@ abstract class DBObject extends ObjectPersistent {
 		return array($id => DBMySQLConnection::stVirtualConstructor($table)->createObj($dbObj));
 	}
 
-	function _save() {
+	protected function _save() {
 
 		$class = get_called_class();
 
@@ -139,5 +139,16 @@ abstract class DBObject extends ObjectPersistent {
 
 		$table = DBObject::stGetTableName($class);
 		return (bool) DBMySQLConnection::stVirtualConstructor($table)->updateObj($dbObj, $objId);
+	}
+
+	protected function _delete() {
+
+		$class = get_called_class();
+
+		$id = $class::stGetFieldFilteredConfig(array("identifier" => true));
+		$objId = array($id => $this->$id);
+
+		$table = DBObject::stGetTableName($class);
+		return (bool) DBMySQLConnection::stVirtualConstructor($table)->deleteObj($objId);
 	}
 }

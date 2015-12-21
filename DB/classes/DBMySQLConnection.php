@@ -175,4 +175,14 @@ class DBMySQLConnection extends ObjectConfigurable {
 
 		return mysqli_insert_id($this->link);
 	}
+
+	function deleteObj($objId) {
+
+		$field = key($objId);
+		$id = current($objId);
+
+		$query = "DELETE FROM $this->table WHERE $field = $id";
+
+		return $this->query($query);
+	}
 }
