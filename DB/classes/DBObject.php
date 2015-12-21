@@ -16,7 +16,7 @@ abstract class DBObject extends ObjectPersistent {
 
 	private function _loadObj() {
 
-		$fieldId = static::stGetFieldFilteredConfig(array("identifier" => true));
+		$fieldId = static::stGetFieldConfigFiltered(array("identifier" => true));
 
 		// Si tenemos el id cargado y existe cargamos el resto de sus datos
 		if (isset($this->$fieldId)
@@ -94,16 +94,23 @@ abstract class DBObject extends ObjectPersistent {
 		return strtolower($class);
 	}
 
-	protected static function _stExists($objId) {
+	private static function _stGetMySQLParams() {
 
-		// Para ello no se debe de llamar NUNCA a DBObject::stExists si no con la clase del objeto a crear
 		$class = get_called_class();
 
-		$fieldId = $class::stGetFieldFilteredConfig(array("identifier" => true));
+		$fieldId = $class::stGetFieldConfigFiltered(array("identifier" => true));
 
 		$table = DBObject::stGetTableName($class);
 
-		return (bool) DBMySQLConnection::stVirtualConstructor($table)->existObj(array($fieldId => $objId));
+		return array("table" => $table,
+			     "fieldId" => $fieldId);
+	}
+
+	protected static function _stExists($objId) {
+
+		$mysqlParams = static::_stGetMySQLParams();
+
+		return (bool) DBMySQLConnection::stVirtualConstructor($mysqlParams)->existObj($objId);
 	}
 
 	protected static function _stCreate($params) {
@@ -118,17 +125,12 @@ abstract class DBObject extends ObjectPersistent {
 			}
 		}
 
-		$id = $class::stGetFieldFilteredConfig(array("identifier" => true));
-		$table = DBObject::stGetTableName($class);
-		return array($id => DBMySQLConnection::stVirtualConstructor($table)->createObj($dbObj));
+		$mysqlParams = static::_stGetMySQLParams();
+
+		return DBMySQLConnection::stVirtualConstructor($mysqlParams)->createObj($dbObj);
 	}
 
 	protected function _save() {
-
-		$class = get_called_class();
-
-		$id = $class::stGetFieldFilteredConfig(array("identifier" => true));
-		$objId = array($id => $this->$id);
 
 		$dbObj = array();
 
@@ -137,18 +139,15 @@ abstract class DBObject extends ObjectPersistent {
 			$dbObj[DBObject::stObjFieldToDBField($field)] = $value;
 		}
 
-		$table = DBObject::stGetTableName($class);
-		return (bool) DBMySQLConnection::stVirtualConstructor($table)->updateObj($dbObj, $objId);
+		$mysqlParams = static::_stGetMySQLParams();
+
+		return (bool) DBMySQLConnection::stVirtualConstructor($mysqlParams)->updateObj($dbObj, $this->_getObjectId());
 	}
 
 	protected function _delete() {
 
-		$class = get_called_class();
+		$mysqlParams = static::_stGetMySQLParams();
 
-		$id = $class::stGetFieldFilteredConfig(array("identifier" => true));
-		$objId = array($id => $this->$id);
-
-		$table = DBObject::stGetTableName($class);
-		return (bool) DBMySQLConnection::stVirtualConstructor($table)->deleteObj($objId);
+		return (bool) DBMySQLConnection::stVirtualConstructor($mysqlParams)->deleteObj($this->_getObjectId());
 	}
 }

@@ -111,43 +111,33 @@ class DBMySQLConnection extends ObjectConfigurable {
 		return $ret[0];
 	}
 
-	function existObj($objId) {
 
-		$field = key($objId);
-		$id = current($objId);
+	private function _getIdParams(& $fieldId, & $valueId, $objId = array()) {
 
-		$query = "SELECT COUNT($field) FROM $this->table WHERE $field = '$id'";
+		if (!is_array($objId)) {
 
-		return $this->count($query);
-	}
-
-	function getObj($objId) {
-
-		$field = key($objId);
-		$id = current($objId);
-
-		$query = "SELECT * FROM $this->table WHERE $field = $id";
-
-		return $this->select($query);
-	}
-
-	function updateObj($dbObj, $objId) {
-
-		// TRAPI
-		$fieldId = key($objId);
-		$id = current($objId);
-
-		$query = "UPDATE $this->table SET";
-
-		foreach ($dbObj as $field => $value) {
-
-			$query = $query . " $field = '$value',";
+			$fieldId = $this->fieldId;
+			$valueId = $objId;
+			return;
 		}
 
-		$query = substr($query, 0, -1) . " WHERE $fieldId = $id";
+		if ($objId !== array()) {
 
-		// Esto no me acaba de gustar
-		return $this->_nativeQuery($query);
+			$fieldId = key($objId);
+			$valueId = current($objId);
+			return;
+		}
+
+		//TODO errores
+	}
+
+	function existObj($objId) {
+
+		$this->_getIdParams($fieldId, $valueId, $objId);
+
+		$query = "SELECT COUNT($fieldId) FROM $this->table WHERE $fieldId = '$valueId'";
+
+		return $this->count($query);
 	}
 
 	function createObj($dbObj) {
@@ -173,15 +163,40 @@ class DBMySQLConnection extends ObjectConfigurable {
 			return false;
 		}
 
-		return mysqli_insert_id($this->link);
+		return array($this->fieldId => mysqli_insert_id($this->link));
+	}
+
+	function getObj($objId) {
+
+		$this->_getIdParams($fieldId, $valueId, $objId);
+
+		$query = "SELECT * FROM $this->table WHERE $fieldId = $valueId";
+
+		return $this->select($query);
+	}
+
+	function updateObj($dbObj, $objId) {
+
+		$this->_getIdParams($fieldId, $valueId, $objId);
+
+		$query = "UPDATE $this->table SET";
+
+		foreach ($dbObj as $field => $value) {
+
+			$query = $query . " $field = '$value',";
+		}
+
+		$query = substr($query, 0, -1) . " WHERE $fieldId = $valueId";
+
+		// Esto no me acaba de gustar
+		return $this->_nativeQuery($query);
 	}
 
 	function deleteObj($objId) {
 
-		$field = key($objId);
-		$id = current($objId);
+		$this->_getIdParams($fieldId, $valueId, $objId);
 
-		$query = "DELETE FROM $this->table WHERE $field = $id";
+		$query = "DELETE FROM $this->table WHERE $fieldId = $valueId";
 
 		return $this->query($query);
 	}

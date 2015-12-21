@@ -103,4 +103,11 @@ abstract class ObjectPersistent extends ObjectConfigurable {
 
 		return $this->_delete();
 	}
+
+	protected function _getObjectId() {
+
+		$fieldId = static::stGetFieldConfigFiltered(array("identifier" => true));
+
+		return $this->$fieldId;
+	}
 }
