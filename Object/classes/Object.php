@@ -15,7 +15,7 @@ abstract class Object {
 	protected function __construct($params = array()) {
 
 		$this->_loadHierarchy();
-		$this->_mergeObjField();
+		$this->_mergeObjField($params);
 		$this->_autoloadParams($params);
 	}
 
@@ -26,15 +26,16 @@ abstract class Object {
 		while (($class = get_parent_class($class)) !== false) {
 			$this::$hierarchy[] = $class;
 		}
-		return;
 	}
 
-	private function _mergeObjField() {
+	private function _mergeObjField($params) {
 
-		foreach ($this::$hierarchy as $class) {
-			$this::$objField = array_merge($class::$objField, $this::$objField);
+		foreach ($params as $param => $value) {
+
+			if (isset($this::$objField[$param])) {
+				$this::$objField[$param] = $value;
+			}
 		}
-		return;
 	}
 
 	private function _autoloadParams($params) {

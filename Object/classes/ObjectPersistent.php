@@ -9,20 +9,41 @@ abstract class ObjectPersistent extends ObjectConfigurable {
 
 		$fieldConfig = $class::stGetFieldsConfig();
 
+		// TRAPI
 		$invalidCreateDTParams = array(array("identifier" => true));
 
-		$ret = array();
+		$invalidCreateParams = array();
 		foreach ($fieldConfig as $field => $config) {
 
 			foreach ($invalidCreateDTParams as $invalidCreateDTParam) {
 
 				if (array_search($invalidCreateDTParam, $config)  !== false) {
-					$ret[] = $field;
+					$invalidCreateParams[] = $field;
 				}
 			}
 		}
 
-		return array_diff(array_keys($fieldConfig), $ret);
+		return array_diff(array_keys($fieldConfig), $invalidCreateParams);
+	}
+
+	private static function stIsValidParamsValues($class, $params) {
+
+		$fieldConfig = $class::stGetFieldsConfig();
+
+		foreach ($params as $field => $value) {
+
+			$DT = $fieldConfig[$field]["DT"];
+			$DTParams = isset($fieldConfig[$field]["DTParams"]) ? $fieldConfig[$field]["DTParams"] : array();
+
+			$DT = $DT::stVirtualConstructor($DTParams);
+
+			if ($DT->isValidValue($value) === false) {
+				// TODO warning y crear error
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	abstract protected static function _stExists($objId);
@@ -44,6 +65,11 @@ abstract class ObjectPersistent extends ObjectConfigurable {
 
 		$invalidParams = array_diff(array_keys($params), $createParams);
 		if (count($invalidParams) !== 0) {
+			// TODO warning y crear error
+			return false;
+		}
+
+		if (!ObjectPersistent::stIsValidParamsValues($class, $params)) {
 			// TODO warning y crear error
 			return false;
 		}
