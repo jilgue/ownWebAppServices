@@ -71,9 +71,9 @@ abstract class ObjectPersistent extends ObjectConfigurable {
 		return static::_stCreate($params);
 	}
 
-	static function stUpdate($fieldId, $params) {
+	static function stUpdate($objId, $params) {
 
-		$obj = static::stVirtualConstructor($fieldId);
+		$obj = static::stVirtualConstructor($objId);
 
 		if (!$obj->multiSetter($params)
 		    || !$obj->save()) {
@@ -109,5 +109,26 @@ abstract class ObjectPersistent extends ObjectConfigurable {
 		$fieldId = static::stGetFieldConfigFiltered(array("identifier" => true));
 
 		return $this->$fieldId;
+	}
+
+	function getObjectId() {
+
+		return $this->_getObjectId();
+	}
+
+	static function stGetObject($objId) {
+
+		$obj = static::stVirtualConstructor($objId);
+
+		$fields = array_keys(static::stGetFieldsConfig());
+
+		$ret = array();
+		foreach ($fields as $field) {
+			if (isset($obj->$field)) {
+				$ret[$field] = $obj->$field;
+			}
+		}
+
+		return $ret;
 	}
 }

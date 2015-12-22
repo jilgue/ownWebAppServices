@@ -13,7 +13,7 @@ abstract class APIJSONPage extends DispatchJSONPage {
 		parent::__construct($params);
 
 		// Securizamos las peticiones
-		$this->_securityRequest($params);
+		//$this->_securityRequest($params);
 	}
 
 	private function _securityRequest($params) {
