@@ -15,7 +15,7 @@ abstract class Object {
 	protected function __construct($params = array()) {
 
 		$this->_loadHierarchy();
-		$this->_mergeObjField($params);
+		//$this->_mergeObjField($params);
 		$this->_autoloadParams($params);
 	}
 
@@ -23,6 +23,7 @@ abstract class Object {
 
 		$class = get_class($this);
 		$class::$hierarchy = array($class);
+
 		while (($class = get_parent_class($class)) !== false) {
 			$this::$hierarchy[] = $class;
 		}
@@ -53,11 +54,6 @@ abstract class Object {
 
 			$this->$param = $value;
 		}
-	}
-
-	private function _checkType($type, $value) {
-
-		return preg_match("#" . $type . "#", $value, $match) === 1;
 	}
 
 	static function stVirtualConstructor($params = array()) {
@@ -174,10 +170,5 @@ abstract class Object {
 		$stCache[$cacheId] = $ret;
 
 		return $ret;
-	}
-
-	static function stGetFieldDataType($field) {
-
-		static::$objField;
 	}
 }

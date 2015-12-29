@@ -15,17 +15,7 @@ abstract class ObjectConfigurable extends Object {
 
 	private function _loadObjFieldConfig() {
 
-		$class = get_class($this);
-
-		$ret = array();
-		do {
-			$objField = LoadConfig::stGetConfigVarClass("objField", $class);
-
-			if ($objField !== false) {
-				$this::$objField = array_merge($objField, $this::$objField);
-			}
-
-		} while (($class = get_parent_class($class)) != false);
+		$this::$objField = static::stGetFieldsConfig();
 	}
 
 	static function stGetFieldsConfig() {
@@ -38,11 +28,19 @@ abstract class ObjectConfigurable extends Object {
 			return $stCache[$class];
 		}
 
-		$objField = LoadConfig::stGetConfigVarClass("objField", $class);
+		$ret = array();
+		do {
+			$objField = LoadConfig::stGetConfigVarClass("objField", $class);
 
-		$stCache[$class] = $objField;
+			if ($objField !== false) {
+				$ret = array_merge($objField, $ret);
+			}
 
-		return $objField;
+		} while (($class = get_parent_class($class)) != false);
+
+		$stCache[$class] = $ret;
+
+		return $ret;
 	}
 
 	static function stGetFieldConfigFiltered($filters) {
