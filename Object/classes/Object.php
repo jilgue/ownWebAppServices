@@ -5,9 +5,9 @@
  */
 abstract class Object {
 
-	// Campos publicos de la clase
-	// TODO son publicos pero se comparten entre clases hermanas por lo que no tiene sentido, hay que pensar como hacer esto de otra manera...
-	static $hierarchy = array();
+	// Se guarda toda la jerarquia de la clase
+	var $hierarchy = array();
+
 	static $objField = array();
 
 	var $params = array();
@@ -22,10 +22,10 @@ abstract class Object {
 	private function _loadHierarchy() {
 
 		$class = get_class($this);
-		$class::$hierarchy = array($class);
+		$this->hierarchy = array($class);
 
 		while (($class = get_parent_class($class)) !== false) {
-			$this::$hierarchy[] = $class;
+			$this->hierarchy[] = $class;
 		}
 	}
 
@@ -44,10 +44,6 @@ abstract class Object {
 		// Si no existe $this->objField es que ninguna clase hija lo ha tocado, lo cargamos nosotros
 		if (!isset($this->objField)) {
 			$this->objField = $this::$objField;
-		}
-
-		if (!isset($this->hierarchy)) {
-			$this->hierarchy = $this::$hierarchy;
 		}
 
 		if (is_array($params)) {
