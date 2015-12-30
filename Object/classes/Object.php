@@ -50,9 +50,11 @@ abstract class Object {
 			$this->hierarchy = $this::$hierarchy;
 		}
 
-		foreach ($params as $param => $value) {
+		if (is_array($params)) {
+			foreach ($params as $param => $value) {
 
-			$this->$param = $value;
+				$this->$param = $value;
+			}
 		}
 	}
 

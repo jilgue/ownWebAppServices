@@ -10,12 +10,52 @@ abstract class ObjectConfigurable extends Object {
 
 		$this->_loadObjFieldConfig();
 
+		$this->_areValidValues($params);
+		$params = $this->_getDefaultValues($params);
+
 		parent::__construct($params);
 	}
 
 	private function _loadObjFieldConfig() {
 
 		$this::$objField = static::stGetFieldsConfig();
+	}
+
+	private function _areValidValues($params) {
+
+		foreach ($params as $param => $value) {
+
+			if (!isset($this::$objField[$param])) {
+				// TODO crear error
+				return;
+			}
+
+			$DT = $this::$objField[$param]["DT"];
+			$DTParams = $this::$objField[$param]["DTParams"];
+
+			if (!$DT::stVirtualConstructor($DTParams)->isValidValue($value)) {
+				// TODO crear error
+				return;
+			}
+		}
+	}
+
+	private function _getDefaultValues($params) {
+
+		$defaultParams = static::stGetFieldsConfigObjFiltered("default");
+		foreach ($defaultParams as $field => $config) {
+
+			// Si ya esta no tenemos que añadir su por defecto
+			if (isset($params[$field])) {
+				continue;
+			}
+
+			// Esto asi es como un poco feo
+			$defaultValue = $config["DTParams"]["defalt"];
+			$params[$field] = $defaultValue;
+		}
+
+		return $params;
 	}
 
 	static function stGetFieldsConfig() {
@@ -39,6 +79,21 @@ abstract class ObjectConfigurable extends Object {
 		} while (($class = get_parent_class($class)) != false);
 
 		$stCache[$class] = $ret;
+
+		return $ret;
+	}
+
+	static function stGetFieldsConfigObjFiltered($filter) {
+
+		$fieldConfig = static::stGetFieldsConfig();
+
+		$ret = array();
+		foreach ($fieldConfig as $field => $config) {
+
+			if (array_column($config, $filter)) {
+				$ret[$field] = $config;
+			}
+		}
 
 		return $ret;
 	}
