@@ -17,7 +17,7 @@ class DispatchDispatcher {
 		}
 
 		// Si no termina en .algo añadimos una barra
-		if (preg_match("#(?:.(?!/))+\.(.*)#", $_URL, $match) === 1) {
+		if (preg_match("#(?:.(?!/))+\.([a-z]+)#", $_URL, $match) === 1) {
 			// TODO controlar las terminaciones que permitimos
 		} else {
 			$_URL = $_URL . "/";
