@@ -51,7 +51,8 @@ abstract class ObjectConfigurable extends Object {
 			}
 
 			// Esto asi es como un poco feo
-			$defaultValue = $config["DTParams"]["defalt"];
+			var_dump($config);
+			$defaultValue = $config["DTParams"]["default"];
 			$params[$field] = $defaultValue;
 		}
 
