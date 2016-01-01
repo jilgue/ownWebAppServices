@@ -4,9 +4,7 @@
  */
 abstract class APIJSONPage extends DispatchJSONPage {
 
-	var $error = "";
 	var $status = "OK";
-	var $response = "";
 
 	protected function __construct($params = array()) {
 
