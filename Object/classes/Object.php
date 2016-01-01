@@ -8,43 +8,24 @@ abstract class Object {
 	// Se guarda toda la jerarquia de la clase
 	var $hierarchy = array();
 
-	static $objField = array();
+	public $objFields = array();
 
 	var $params = array();
 
 	protected function __construct($params = array()) {
 
 		$this->_loadHierarchy();
-		//$this->_mergeObjField($params);
+
 		$this->_autoloadParams($params);
 	}
 
 	private function _loadHierarchy() {
 
 		$class = get_class($this);
-		$this->hierarchy = array($class);
-
-		while (($class = get_parent_class($class)) !== false) {
-			$this->hierarchy[] = $class;
-		}
-	}
-
-	private function _mergeObjField($params) {
-
-		foreach ($params as $param => $value) {
-
-			if (isset($this::$objField[$param])) {
-				$this::$objField[$param] = $value;
-			}
-		}
+		$this->hierarchy = Object::stGetHierarchy($class);
 	}
 
 	private function _autoloadParams($params) {
-
-		// Si no existe $this->objField es que ninguna clase hija lo ha tocado, lo cargamos nosotros
-		if (!isset($this->objField)) {
-			$this->objField = $this::$objField;
-		}
 
 		if (is_array($params)) {
 			foreach ($params as $param => $value) {
@@ -52,7 +33,10 @@ abstract class Object {
 				$this->$param = $value;
 			}
 		}
+
+		$this->params = $params;
 	}
+
 
 	static function stVirtualConstructor($params = array()) {
 
@@ -78,6 +62,33 @@ abstract class Object {
 		}
 
 		return new $class($args);
+	}
+
+	static function stGetObjFields() {
+
+		$class = get_called_class();
+
+		$objFields = array();
+		foreach (Object::stGetHierarchy($class) as $class) {
+
+			$reflex = new ReflectionClass($class);
+
+			$properties = $reflex->getDefaultProperties();
+
+			$objFields = array_merge($objFields, $properties["objFields"]);
+		}
+		return $objFields;
+	}
+
+	static function stGetHierarchy($class) {
+
+		$ret = array($class);
+
+		while (($class = get_parent_class($class)) !== false) {
+			$ret[] = $class;
+		}
+
+		return $ret;
 	}
 
 	/**

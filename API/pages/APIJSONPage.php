@@ -43,24 +43,24 @@ abstract class APIJSONPage extends DispatchJSONPage {
 		die;
 	}
 
-	protected function _setError($error, $msg) {
+	protected function _getErrors() {
+
+		if (count(LogsErrors::$stErrors) == 0) {
+			return array();
+		}
 
 		$this->status = "KO";
 
-		$this->error = LoadConfig::stGetConfigVar("errorCode")[$error];
-
-		$this->response = $msg;
+		return array("errors" => LogsErrors::$stErrors);
 	}
 
 	abstract protected function _getResponse();
 
 	function _getOutput() {
 
-		$ret = array();
+		$ret = $this->_getResponse();
 
-		$ret["response"] = $this->response == "" ? $this->_getResponse() : $this->response;
-
-		$ret = $this->error == "" ? $ret : array_merge($ret, array("error" => $this->error));
+		$ret = array_merge($ret, $this->_getErrors());
 
 		$ret = array_merge($ret, array("status" => $this->status));
 

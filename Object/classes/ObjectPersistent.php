@@ -59,8 +59,9 @@ abstract class ObjectPersistent extends ObjectConfigurable {
 
 		$invalidParams = array_diff(array_keys($params), $createParams);
 		if (count($invalidParams) !== 0) {
-			LogsErrors::stCreate(array("errorCode" => 0));
-			// TODO warning y crear error
+
+			LogsErrors::stCreate(array("errorCode" => 0,
+						   "param" => implode(",", $invalidParams)));
 			return false;
 		}
 

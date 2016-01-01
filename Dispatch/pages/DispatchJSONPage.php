@@ -10,6 +10,8 @@ abstract class DispatchJSONPage extends DispatchPage {
 
 	function getOutput() {
 
+		header('Content-Type: application/json');
+
 		// Llamamos primero a _getOutput para recoger el resultado de la clase hija
 		$ret = $this->_getOutput();
 

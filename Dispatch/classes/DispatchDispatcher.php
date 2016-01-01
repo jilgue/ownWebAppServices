@@ -60,7 +60,7 @@ class DispatchDispatcher {
 
 			foreach ($match as $param => $value) {
 
-				if (isset($class::$objField[$param])) {
+				if (isset($class::stGetObjFields()[$param])) {
 					$ret[$param] = $value;
 				}
 			}

@@ -18,20 +18,20 @@ abstract class ObjectConfigurable extends Object {
 
 	private function _loadObjFieldConfig() {
 
-		$this::$objField = static::stGetFieldsConfig();
+		$this->objFields = static::stGetFieldsConfig();
 	}
 
 	private function _areValidValues($params) {
 
 		foreach ($params as $param => $value) {
 
-			if (!isset($this::$objField[$param])) {
+			if (!isset($this->objFields[$param])) {
 				// TODO crear error
 				return;
 			}
 
-			$DT = $this::$objField[$param]["DT"];
-			$DTParams = $this::$objField[$param]["DTParams"];
+			$DT = $this->objFields[$param]["DT"];
+			$DTParams = isset($this->objFields[$param]["DTParams"]) ? $this->objFields[$param]["DTParams"] : array();
 
 			if (!$DT::stVirtualConstructor($DTParams)->isValidValue($value)) {
 				// TODO crear error
@@ -42,7 +42,7 @@ abstract class ObjectConfigurable extends Object {
 
 	private function _getDefaultValues($params) {
 
-		$defaultParams = static::stGetFieldsConfigObjFiltered("default");
+		$defaultParams = array_merge(static::stGetFieldsConfigObjFiltered("default"), static::stGetFieldsConfigObjFiltered("defaultEval"));
 		foreach ($defaultParams as $field => $config) {
 
 			// Si ya esta no tenemos que añadir su por defecto
@@ -51,8 +51,13 @@ abstract class ObjectConfigurable extends Object {
 			}
 
 			// Esto asi es como un poco feo
-			$defaultValue = $config["DTParams"]["default"];
-			$params[$field] = $defaultValue;
+			if (isset($config["DTParams"]["default"])) {
+				$params[$field] = $config["DTParams"]["default"];
+			}
+
+			if (isset($config["DTParams"]["defaultEval"])) {
+				$params[$field] = eval($config["DTParams"]["defaultEval"]);
+			}
 		}
 
 		return $params;

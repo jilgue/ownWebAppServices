@@ -4,8 +4,8 @@
  */
 class APIRESTResponseJSONPage extends APIJSONPage {
 
-	static $objField = array("object" => "\d",
-				 "function" => "\d",
+	public $objFields = array("object" => "\d",
+				  "function" => "\d",
 	);
 
 	protected function __construct($params = array()) {
@@ -74,6 +74,9 @@ class APIRESTResponseJSONPage extends APIJSONPage {
 		}
 
 		$res = call_user_func_array(array($class, $func), $this->_getFunctionParams($class, $func));
-		var_dump($res);die;
+
+		return array("response" => $res,
+			     "class" => $class,
+			     "function" => $func);
 	}
 }

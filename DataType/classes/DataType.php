@@ -10,12 +10,14 @@ abstract class DataType extends Object {
 				 "DBType" => null,
 				 "regex" => null,
 				 "maxLength" => null,
+				 "validValues" => null,
 	);
 
 
 	function isValidValue($value) {
 
 		$type = $this::$objField["type"];
+
 		if (!$type($value)) {
 			return false;
 		}
