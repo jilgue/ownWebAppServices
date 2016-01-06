@@ -4,12 +4,26 @@
  */
 class DBCreateSchema extends CoreScript {
 
+	var $classes = array();
+
 	private function _getConfigClasses() {
 
-		$classes = Core::stGetClassesList("classes");
-		$packages = LoadInit::stPackagesLoad();
+		if ($this->classes !== array()) {
 
-		$mainClasses = array_intersect($classes, $packages);
+			if (is_array($this->classes)) {
+				$mainClasses = $this->classes;
+			} else {
+				// Esperemos que sea solo uno y que el resto de cosas hayan funcionado bien
+				$mainClasses = (array)$this->classes;
+			}
+
+		} else {
+
+			$classes = Core::stGetClassesList("classes");
+			$packages = LoadInit::stPackagesLoad();
+
+			$mainClasses = array_intersect($classes, $packages);
+		}
 
 		$ret = array();
 		foreach ($mainClasses as $mainClass) {
@@ -44,7 +58,7 @@ class DBCreateSchema extends CoreScript {
 
 			if ($fieldConfig["DT"] == "DataTypeIdDT"
 			    && $fieldConfig["DTParams"]["identifier"] == true) {
-				$PK[] = $field;
+				$PK[] = DBObject::stObjFieldToDBField($field);
 			}
 		}
 
@@ -69,13 +83,17 @@ class DBCreateSchema extends CoreScript {
 
 	private function _createSchema() {
 
-		$configClasses = $this->_getConfigClasses();
+		$classes = $this->_getConfigClasses();
 
-		foreach ($configClasses as $class => $config) {
+		foreach ($classes as $class => $config) {
 
 			$table = $this->_getTableSchema($config, $class);
 
 			echo $table . "\n";
+
+			if (!$this->run) {
+				continue;
+			}
 
 			if (!DBMySQLConnection::stVirtualConstructor()->query($table)) {
 				// TODO warning
