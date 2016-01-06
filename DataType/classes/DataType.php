@@ -46,6 +46,6 @@ abstract class DataType extends Object {
 			}
 		}
 
-		return "`" . $field . "` " . $this->_getDBColumnType($_params);
+		return "`" . DBObject::stObjFieldToDBField($field) . "` " . $this->_getDBColumnType($_params);
 	}
 }
