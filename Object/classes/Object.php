@@ -47,6 +47,10 @@ abstract class Object {
 		if ($numArgs == 1) {
 			if (is_array($args[0])) {
 
+				if ($args[0] == $params) {
+					return new $class($params);
+				}
+
 				// Ok, nos han llamado de la forma "normal": un único parámetro de tipo array
 				return new $class(array_merge($args[0], $params));
 			}
