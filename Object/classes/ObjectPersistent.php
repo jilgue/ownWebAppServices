@@ -5,15 +5,24 @@
  */
 abstract class ObjectPersistent extends ObjectConfigurable {
 
+	var $objectId = false;
+	var $fieldId = false;
+
 	protected function __construct($params = array()) {
 
 		parent::__construct($params);
 
 		$fieldId = static::stGetFieldConfigFiltered(array("identifier" => true));
 
+		// Si no existe, ponemos como no ok y paramos
 		if (static::stExists($this->$fieldId) === false) {
 			$this->ok = false;
+			return;
 		}
+
+		// añadimos el objectId
+		$this->objectId = $this->$fieldId;
+		$this->fieldId = $fieldId;
 	}
 
 	static function stGetValidCreateParams($class) {
@@ -124,18 +133,6 @@ abstract class ObjectPersistent extends ObjectConfigurable {
 		}
 
 		return $this->_delete();
-	}
-
-	protected function _getObjectId() {
-
-		$fieldId = static::stGetFieldConfigFiltered(array("identifier" => true));
-
-		return $this->$fieldId;
-	}
-
-	function getObjectId() {
-
-		return $this->_getObjectId();
 	}
 
 	static function stGetObject($objId) {

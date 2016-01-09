@@ -16,20 +16,17 @@ abstract class DBObject extends ObjectPersistent {
 
 	private function _loadObj() {
 
-		$fieldId = static::stGetFieldConfigFiltered(array("identifier" => true));
+		if (!$this->ok) {
+			return;
+		}
 
-		// Si tenemos el id cargado y existe cargamos el resto de sus datos
-		if (isset($this->$fieldId)
-		    && static::stExists($this->$fieldId)) {
+		$table = DBObject::stGetTableName(get_class($this));
 
-			$table = DBObject::stGetTableName(get_class($this));
+		$dbObj = DBMySQLConnection::stVirtualConstructor($table)->getObj(array($this->fieldId => $this->objectId));
 
-			$dbObj = DBMySQLConnection::stVirtualConstructor($table)->getObj(array($fieldId => $this->$fieldId));
-
-			$fields = DBObject::stDBToObjFields($table);
-			foreach ($dbObj as $dbField => $data) {
-				$this->$fields[$dbField] = $data;
-			}
+		$fields = DBObject::stDBToObjFields($table);
+		foreach ($dbObj as $dbField => $data) {
+			$this->$fields[$dbField] = $data;
 		}
 	}
 
