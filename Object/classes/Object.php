@@ -12,6 +12,8 @@ abstract class Object {
 
 	var $params = array();
 
+	var $ok = true;
+
 	protected function __construct($params = array()) {
 
 		$this->_loadHierarchy();
@@ -105,6 +107,11 @@ abstract class Object {
 			return $this->_getCachedFuncion($matches[1], $arguments);
 		}
 
+		$this->_callSetGet($method, $arguments);
+	}
+
+	private function _callSetGet($method, $arguments) {
+
 		if (!preg_match("#^(get|set|_get|_set)(.+)$#", $method, $matches)) {
 			// Método desconocido
 			return null;
@@ -112,6 +119,10 @@ abstract class Object {
 
 		$op = $matches[1];
 		$capturedField = $matches[2];
+
+		if (!isset($this->$capturedField)) {
+			return null;
+		}
 
 		switch ($op) {
 		case "get":

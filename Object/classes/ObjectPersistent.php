@@ -5,6 +5,17 @@
  */
 abstract class ObjectPersistent extends ObjectConfigurable {
 
+	protected function __construct($params = array()) {
+
+		parent::__construct($params);
+
+		$fieldId = static::stGetFieldConfigFiltered(array("identifier" => true));
+
+		if (static::stExists($this->$fieldId) === false) {
+			$this->ok = false;
+		}
+	}
+
 	static function stGetValidCreateParams($class) {
 
 		return ObjectConfigurable::_stExcludeConfigParams($class, array(array("identifier" => true)));
@@ -33,6 +44,7 @@ abstract class ObjectPersistent extends ObjectConfigurable {
 	protected function _getStoredParams() {
 
 		$storedParams = ObjectConfigurable::_stExcludeConfigParams(get_class($this), array(array("identifier" => true)));
+
 		$ret = array();
 		foreach ($storedParams as $storedParam) {
 			$ret[$storedParam] = $this->$storedParam;
@@ -89,6 +101,10 @@ abstract class ObjectPersistent extends ObjectConfigurable {
 
 	function save() {
 
+		if(!$this->ok) {
+			return false;
+		}
+
 		$storedParams = $this->_getStoredParams();
 
 		if (!ObjectPersistent::stIsValidParamsValues(get_class($this), $storedParams)) {
@@ -102,6 +118,10 @@ abstract class ObjectPersistent extends ObjectConfigurable {
 	abstract protected function _delete();
 
 	function delete() {
+
+		if(!$this->ok) {
+			return false;
+		}
 
 		return $this->_delete();
 	}

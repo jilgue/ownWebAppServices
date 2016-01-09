@@ -94,7 +94,10 @@ abstract class DBObject extends ObjectPersistent {
 		return strtolower($class);
 	}
 
-	private static function _stGetMySQLParams() {
+	/**
+	 * Es publica porque también lo usan clases "hermanas" como DBObjectSearch
+	 */
+	static function _stGetMySQLParams() {
 
 		$class = get_called_class();
 
