@@ -37,6 +37,12 @@ abstract class Object {
 		}
 
 		$this->params = $params;
+
+		foreach ($this->objFields as $objField => $value) {
+			if (!isset($this->$objField)) {
+				$this->$objField = $value;
+			}
+		}
 	}
 
 
