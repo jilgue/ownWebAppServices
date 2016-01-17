@@ -35,6 +35,12 @@ class APIRESTResponseJSONPage extends APIJSONPage {
 			$expectedParams[] = $validFunctionParam->name;
 		}
 
+		// Nos aseguramos que si nos pasamos el mismo numero de parametros que los que esperamos esten bien
+		if (count($this->functionsParams) == count($expectedParams)
+		    && array_diff(array_keys($this->functionsParams), $expectedParams) !== array()) {
+			    return false;
+		}
+
 		$goodParams = true;
 
 		$funtionParams = array();
@@ -73,7 +79,13 @@ class APIRESTResponseJSONPage extends APIJSONPage {
 			return;
 		}
 
-		$res = call_user_func_array(array($class, $func), $this->_getFunctionParams($class, $func));
+		$params = $this->_getFunctionParams($class, $func);
+		if (!$params) {
+			LogsErrors::stCreate(array("errorCode" => 0));
+			return array();
+		}
+
+		$res = call_user_func_array(array($class, $func), $params);
 
 		return array("response" => $res,
 			     "class" => $class,

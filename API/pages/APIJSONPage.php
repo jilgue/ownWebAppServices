@@ -56,6 +56,7 @@ abstract class APIJSONPage extends DispatchJSONPage {
 
 	function _getOutput() {
 
+		// TODO error si nos devuelven algo que no sea un array
 		$ret = $this->_getResponse();
 
 		$ret = array_merge($ret, $this->_getErrors());
