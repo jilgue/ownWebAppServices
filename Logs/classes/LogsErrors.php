@@ -22,8 +22,9 @@ class LogsErrors extends ObjectConfigurable {
 	}
 
 	protected function _getMessage($params) {
+		$class = $this->_getTraces(10)[9]["class"];
 
-		$errorCode = LoadConfig::stGetConfigVarClass("errorCode", "LogsErrors");
+		$errorCode = LoadConfig::stGetConfigVarClass("errorCodeMessage", $class);
 
 		if (isset($errorCode[$params["errorCode"]])) {
 			return $errorCode[$params["errorCode"]];
@@ -46,8 +47,8 @@ class LogsErrors extends ObjectConfigurable {
 		return $traces[9]["function"];
 	}
 
-	private function _getTraces() {
+	private function _getTraces($limit = 10) {
 
-		return debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 10);
+		return debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, $limit);
 	}
 }

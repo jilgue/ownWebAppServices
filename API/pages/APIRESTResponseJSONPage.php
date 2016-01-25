@@ -4,6 +4,9 @@
  */
 class APIRESTResponseJSONPage extends APIJSONPage {
 
+	// Errores
+	const ERROR_CODE_INVALID_FUNCTION_PARAM = "APIRESTResponseJSONPage::ERROR_CODE_INVALID_FUNCTION_PARAM";
+
 	public $objFields = array("object" => "\d",
 				  "function" => "\d",
 	);
@@ -81,7 +84,8 @@ class APIRESTResponseJSONPage extends APIJSONPage {
 
 		$params = $this->_getFunctionParams($class, $func);
 		if (!$params) {
-			LogsErrors::stCreate(array("errorCode" => 0));
+			LogsErrors::stCreate(array("errorCode" => APIRESTResponseJSONPage::ERROR_CODE_INVALID_FUNCTION_PARAM,
+						   "function" => "_getFunctionParams"));
 			return array();
 		}
 

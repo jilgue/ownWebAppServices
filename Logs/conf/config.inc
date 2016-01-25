@@ -1,6 +1,6 @@
 <?php
 
-$config["LogsErrors"]["objField"]["errorCode"] = array("DT" => "DataTypeIdDT",
+$config["LogsErrors"]["objField"]["errorCode"] = array("DT" => "DataTypeStringDT",
 						       "DTParams" => array("obligatory" => true));
 
 $config["LogsErrors"]["objField"]["degree"] = array("DT" => "DataTypeStringDT",
@@ -19,6 +19,3 @@ $config["LogsErrors"]["objField"]["function"] = array("DT" => "DataTypeStringDT"
 $config["LogsErrors"]["objField"]["param"] = array("DT" => "DataTypeStringDT");
 
 $config["LogsErrors"]["objField"]["value"] = array("DT" => "DataTypeStringDT");
-
-// Errors codes
-$config["LogsErrors"]["errorCode"][0] = "Invalid create param";
