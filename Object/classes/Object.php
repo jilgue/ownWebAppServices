@@ -113,7 +113,7 @@ abstract class Object {
 			return $this->_getCachedFuncion($matches[1], $arguments);
 		}
 
-		$this->_callSetGet($method, $arguments);
+		return $this->_callSetGet($method, $arguments);
 	}
 
 	private function _callSetGet($method, $arguments) {
@@ -124,7 +124,7 @@ abstract class Object {
 		}
 
 		$op = $matches[1];
-		$capturedField = $matches[2];
+		$capturedField = lcfirst($matches[2]);
 
 		if (!isset($this->$capturedField)) {
 			return null;
@@ -137,7 +137,7 @@ abstract class Object {
 				return null;
 			}
 
-		return $this->_getter(lcfirst($capturedField));
+			return $this->_getter($capturedField);
 		break;
 
 		case "set":
@@ -146,7 +146,7 @@ abstract class Object {
 				return null;
 			}
 
-		return $this->_setter(lcfirst($capturedField), $arguments[0]);
+			return $this->_setter($capturedField, $arguments[0]);
 		break;
 
 		default:
@@ -167,7 +167,8 @@ abstract class Object {
 	private function _setter($field, $value) {
 
 		if (isset($this->$field)) {
-			return (bool) $this->$field = $value;
+			$this->$field = $value;
+			return (bool) $this->$field === $value;
 		}
 		return false;
 	}
