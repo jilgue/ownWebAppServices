@@ -5,6 +5,9 @@
  */
 abstract class ObjectPersistentSearch extends Object {
 
+	const ERROR_CODE_INVALID_OPERATOR = "ObjectPersistentSearch::ERROR_CODE_INVALID_OPERATOR";
+	const ERROR_CODE_INVALID_FILTER = "ObjectPersistentSearch::ERROR_CODE_INVALID_FILTER";
+
 	public $objFields = array("filters" => array(),
 				  "fields" => "*",
 				  "order" => false,
@@ -22,6 +25,9 @@ abstract class ObjectPersistentSearch extends Object {
 			       "REGEXP",
 	);
 
+	var $count = 0;
+	var $search = array();
+
 	protected function __construct($params = array()) {
 
 		parent::__construct($params);
@@ -31,22 +37,54 @@ abstract class ObjectPersistentSearch extends Object {
 			return;
 		}
 
-		$this->_processFieldFilter();
-
-		$this->_processSearch();
+		if ($this->_processFieldFilter()) {
+			$this->_processSearch();
+		}
 	}
 
 	abstract protected function _processSearch();
 
+	abstract protected function _getSearchClass();
+
 	private function _processFieldFilter() {
 
-		foreach ($this->filters as & $filter) {
+		$class = $this->_getSearchClass();
+		$classFieldsConfig = $class::stGetFieldsConfig();
+
+		foreach ($this->filters as $filter => & $value) {
 
 			// Si todavia no es un array ponemos el operador por defecto
-			if (!is_array($filter)) {
-				$filter = array("=", $filter);
+			if (!is_array($value)) {
+				$value = array("=", $value);
+			} else {
+				// Si es un array pero de un elemento suponemos que es el valor a buscar, no debería ser así pero lo admitimos porque puede ser cómodo
+				if (count($value) == 1) {
+					$value = array("=", $value[0]);
+				}
+
+				if (!in_array($value[0], $this->operators)) {
+					LogsErrors::stCreate(array("errorCode" => ObjectPersistentSearch::ERROR_CODE_INVALID_OPERATOR,
+								   "object" => $this,
+								   "degree" => "fatal",
+								   "param" => $filter,
+								   "value" => $value[0]));
+
+					return false;
+				}
 			}
+
+			if (!in_array($filter, array_keys($classFieldsConfig))) {
+				LogsErrors::stCreate(array("errorCode" => ObjectPersistentSearch::ERROR_CODE_INVALID_FILTER,
+							   "object" => $this,
+							   "degree" => "fatal",
+							   "value" => $filter));
+				return false;
+			}
+
+
 		}
+
+		return true;
 	}
 
 	static function stGetResults($filters, $order = false, $page = 1, $limit = 10) {

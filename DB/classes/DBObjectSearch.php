@@ -5,7 +5,6 @@
  */
 abstract class DBObjectSearch extends ObjectPersistentSearch {
 
-	abstract protected function _getSearchClass();
 
 	protected function _processSearch() {
 
@@ -19,6 +18,8 @@ abstract class DBObjectSearch extends ObjectPersistentSearch {
 
 		$where = "";
 		foreach ($this->filters as $field => $filter) {
+
+			$field = DBObject::stObjFieldToDBField($field);
 
 			$op = $filter[0];
 
@@ -63,6 +64,13 @@ abstract class DBObjectSearch extends ObjectPersistentSearch {
 	function getResults() {
 
 		$ret = array();
+
+		// Si no hay nada que buscar porque hay error, devolvemos vacio y como esta setado el error nos enteramos de que algo va mal
+		if (!is_object($this->search)
+		    && !method_exists($this->search, "fetch_assoc")) {
+			return $ret;
+		}
+
 		while ($row = $this->search->fetch_assoc()) {
 			$ret[] = $row;
 		}
