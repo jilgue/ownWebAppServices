@@ -83,6 +83,7 @@ class APIRESTResponseJSONPage extends APIJSONPage {
 		}
 
 		$params = $this->_getFunctionParams($class, $func);
+
 		if (!$params) {
 			LogsErrors::stCreate(array("errorCode" => APIRESTResponseJSONPage::ERROR_CODE_INVALID_FUNCTION_PARAM,
 						   "function" => "_getFunctionParams"));
