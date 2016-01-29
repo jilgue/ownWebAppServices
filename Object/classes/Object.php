@@ -12,6 +12,7 @@ abstract class Object {
 
 	var $params = array();
 
+	// Sirve para saber si el objecto esta correcto
 	var $ok = true;
 
 	protected function __construct($params = array()) {
@@ -45,6 +46,17 @@ abstract class Object {
 		}
 	}
 
+	static private function _stFinalConstruct($object, $params = array()) {
+
+		// El objecto esta mal y no viene ya sin parámetros, lo devolvemos vacio
+		if ($object->ok === false
+		    && count($params) != 0) {
+			$class = get_class($object);
+			return $class::stVirtualConstructor();
+		}
+
+		return $object;
+	}
 
 	static function stVirtualConstructor($params = array()) {
 
@@ -56,24 +68,24 @@ abstract class Object {
 			if (is_array($args[0])) {
 
 				if ($args[0] == $params) {
-					return new $class($params);
+					return Object::_stFinalConstruct(new $class($params), $params);
 				}
 
 				// Ok, nos han llamado de la forma "normal": un único parámetro de tipo array
-				return new $class(array_merge($args[0], $params));
+				return Object::_stFinalConstruct(new $class(array_merge($args[0], $params)), $params);
 			}
 		}
 
 		if ($numArgs == 0) {
-			return new $class($params);
+			return Object::_stFinalConstruct(new $class($params), $params);
 		}
 
 		// Si no es así pasamos todos los parametros y cada clase sabra que hacer con ellos, por el bien que le trae xD
 		if (is_array($params)) {
-			return new $class(array_merge($args, $params));
+			return Object::_stFinalConstruct(new $class(array_merge($args, $params)), $params);
 		}
 
-		return new $class($args);
+		return Object::_stFinalConstruct(new $class($args), $params);
 	}
 
 	static function stGetObjFields() {
