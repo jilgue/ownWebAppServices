@@ -10,11 +10,33 @@ class LogsErrors extends ObjectConfigurable {
 
 	protected function __construct($params = array()) {
 
+		$this->_processDegree($params);
+
 		parent::__construct($params);
 
 		LogsErrors::$stErrors[] = $this->params;
 	}
 
+	private function _processDegree(& $params) {
+
+		if (!isset($params["object"])) {
+			return;
+		}
+
+		$object = $params["object"];
+		unset($params["object"]);
+
+		if (!$object instanceof Object) {
+			return;
+		}
+
+		if (isset($params["degree"])
+		    && $params["degree"] == "fatal") {
+			$object->ok = false;
+		}
+
+		return;
+	}
 
 	static function stCreate($params) {
 
