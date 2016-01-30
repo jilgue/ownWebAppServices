@@ -81,4 +81,22 @@ abstract class DBObjectSearch extends ObjectPersistentSearch {
 
 		return $ret;
 	}
+
+	/**
+	 * Solo devuelve un resultado
+	 */
+	function getResult() {
+
+		// Si no hay nada que buscar porque hay error, devolvemos vacio y como esta setado el error nos enteramos de que algo va mal
+		if (!is_object($this->search)
+		    && !method_exists($this->search, "fetch_assoc")) {
+			return $ret;
+		}
+
+		while ($row = $this->search->fetch_assoc()) {
+			return $row;
+		}
+
+		return false;
+	}
 }
