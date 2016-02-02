@@ -18,9 +18,15 @@ abstract class ObjectConfigurable extends Object {
 
 	private function _loadObjFieldConfig() {
 
-		$this->objFields = static::stGetFieldsConfig();
+		$objFields = static::stGetFieldsConfig();
+		if ($objFields === array()) {
+			return;
+		}
+
+		$this->objFields = array_merge($this->objFields, $objFields);
 	}
 
+	// TODO esto debería estar aquí ? es cosa de los DT no ?
 	private function _areValidValues($params) {
 
 		foreach ($params as $param => $value) {
@@ -40,6 +46,7 @@ abstract class ObjectConfigurable extends Object {
 		}
 	}
 
+	// TODO esto debería estar aquí ? es cosa de los DT no ?
 	private function _getDefaultValues($params) {
 
 		$defaultParams = array_merge(static::stGetFieldsConfigObjFiltered("default"), static::stGetFieldsConfigObjFiltered("defaultEval"));
