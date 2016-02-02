@@ -46,7 +46,7 @@ abstract class Object {
 		}
 	}
 
-	static private function _stFinalConstruct($object, $params = array()) {
+	final static private function _stFinalConstruct($object, $params = array()) {
 
 		// El objecto esta mal y no viene ya sin parámetros, lo devolvemos vacio
 		if ($object->ok === false
