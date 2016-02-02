@@ -2,27 +2,44 @@
 /**
  *
  */
-abstract class DataType extends Object {
+abstract class DataType extends ObjectConfigurable {
 
-	// Campos que deben sobreescribir cada datatype
-	static $objField = array("optional" => true,
-				 "type" => null,
-				 "DBType" => null,
-				 "regex" => null,
-				 "maxLength" => null,
-				 "validValues" => null,
+	var $optional = true;
+	// Los campos declarados a null hay que sobreescribirlos
+	var $type = null;
+	var $DBType = null;
+	var $regex = null;
+	var $maxLength = null;
+
+	var $validValues = array();
+
+	public $objFields = array("type" => array("DT" => "DataTypeStringDT",
+						  "DTParams" => array("optional" => false)),
+				  "DBType" => array("DT" => "DataTypeStringDT",
+						    "DTParams" => array("optional" => false)),
+				  "regex" => array("DT" => "DataTypeStringDT",
+						   "DTParams" => array("optional" => false)),
+				  "maxLength" => array("DT" => "DataTypeIntDT",
+						       "DTParams" => array("optional" => false)),
 	);
-
 
 	function isValidValue($value) {
 
-		$type = $this::$objField["type"];
-
+		$type = $this->type;
 		if (!$type($value)) {
 			return false;
 		}
 
-		if (preg_match("#" . $this::$objField["regex"] . "#", $value, $match) !== 1) {
+		if (preg_match("#" . $this->regex . "#", $value, $match) !== 1) {
+			return false;
+		}
+
+		if ($this->validValues
+		    && !in_array($value, $this->validValues, true)) {
+			return false;
+		}
+
+		if (strlen($value) > $this->maxLength) {
 			return false;
 		}
 

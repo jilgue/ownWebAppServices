@@ -4,25 +4,10 @@
  */
 class DataTypeStringDT extends DataType {
 
-	static $objField = array("type" => "is_string",
-				 "DBType" => "VARCHAR",
-				 "regex" => ".*",
-				 "maxLength" => 250,
-	);
-
-
-	function isValidValue($value) {
-
-		if (parent::isValidValue($value) === false) {
-			return false;
-		}
-
-		if (strlen($value) > $this::$objField["maxLength"]) {
-			return false;
-		}
-
-		return true;
-	}
+	var $type = "is_string";
+	var $DBType = "VARCHAR";
+	var $regex = ".*";
+	var $maxLength = 250;
 
 	protected function _getDBColumnType($params) {
 
