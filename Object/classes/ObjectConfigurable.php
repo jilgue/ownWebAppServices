@@ -5,15 +5,16 @@
  */
 abstract class ObjectConfigurable extends Object {
 
+	const ERROR_CODE_PARAM_IS_NOT_VALID = "ObjectConfigurable::ERROR_CODE_PARAM_IS_NOT_VALID";
+
 
 	protected function __construct($params = array()) {
 
 		$this->_loadObjFieldConfig();
 
-		$this->_areValidValues($params);
-		$params = $this->_getDefaultValues($params);
-
 		parent::__construct($params);
+
+		$this->_validateParams();
 	}
 
 	private function _loadObjFieldConfig() {
@@ -26,24 +27,33 @@ abstract class ObjectConfigurable extends Object {
 		$this->objFields = array_merge($this->objFields, $objFields);
 	}
 
-	// TODO esto debería estar aquí ? es cosa de los DT no ?
-	private function _areValidValues($params) {
+	private function _validateParams() {
 
-		foreach ($params as $param => $value) {
+		// Comprobamos los parametros que nos han pasado son válidos
+		foreach (array_intersect(array_keys($this->params), array_keys($this->objFields)) as $param) {
 
-			if (!isset($this->objFields[$param])) {
-				// TODO crear error
-				return;
-			}
+			if (!$this->getFieldDTObj($param)
+			    || !$this->getFieldDTObj($param)->isValidValue($this->params[$param])) {
 
-			$DT = $this->objFields[$param]["DT"];
-			$DTParams = isset($this->objFields[$param]["DTParams"]) ? $this->objFields[$param]["DTParams"] : array();
-
-			if (!$DT::stVirtualConstructor($DTParams)->isValidValue($value)) {
-				// TODO crear error
-				return;
+				LogsErrors::stCreate(array("errorCode" => ObjectConfigurable::ERROR_CODE_PARAM_IS_NOT_VALID,
+							   "object" => $this,
+							   "degree" => "fatal",
+							   "param" => $param,
+							   "value" => $this->params[$param]));
 			}
 		}
+	}
+
+	function getFieldDTObj($field) {
+
+		if (!isset($this->objFields[$field]["DT"])) {
+			return false;
+		}
+
+		$DT = $this->objFields[$field]["DT"];
+		$DTParams = isset($this->objFields[$field]["DTParams"]) ? $this->objFields[$field]["DTParams"] : array();
+
+		return $DT::stVirtualConstructor($DTParams);
 	}
 
 	// TODO esto debería estar aquí ? es cosa de los DT no ?
