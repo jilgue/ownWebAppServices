@@ -18,4 +18,4 @@ $config["LogsErrors"]["objField"]["function"] = array("DT" => "DataTypeStringDT"
 
 $config["LogsErrors"]["objField"]["param"] = array("DT" => "DataTypeStringDT");
 
-$config["LogsErrors"]["objField"]["value"] = array("DT" => "DataTypeStringDT");
+$config["LogsErrors"]["objField"]["value"] = array("DT" => "DataTypeAllValueDT");
