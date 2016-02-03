@@ -8,6 +8,7 @@ class DataTypeStringDT extends DataType {
 	var $DBType = "VARCHAR";
 	var $regex = ".*";
 	var $maxLength = 250;
+	var $inputType = "input";
 
 	protected function _getDBColumnType($params) {
 

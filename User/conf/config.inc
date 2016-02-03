@@ -6,5 +6,5 @@ $config["User"]["objField"]["userId"] = array("DT" => "DataTypeIdDT",
 $config["User"]["objField"]["userName"] = array("DT" => "DataTypeStringDT",
 						"DTParams" => array("maxLength" => 25));
 
-$config["User"]["objField"]["password"] = array("DT" => "DataTypeStringDT",
+$config["User"]["objField"]["password"] = array("DT" => "UserPasswordDT",
 						"DTParams" => array("maxLength" => 40));

@@ -10,6 +10,8 @@ abstract class DataType extends ObjectConfigurable {
 	var $DBType = null;
 	var $regex = null;
 	var $maxLength = null;
+	// No todos van a tener un input
+	var $inputType = false;
 
 	var $validValues = array();
 
