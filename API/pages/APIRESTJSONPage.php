@@ -22,5 +22,19 @@ abstract class APIRESTJSONPage extends APIJSONPage {
 		return array("queryStringParams" => $requestParams);
 	}
 
+	protected function _getCallableMethod() {
 
+		$class = LoadInit::stGetClassCaseInsensitive($this->object);
+
+		$func = "st" . ucfirst($this->function);
+
+		$obj = $class::stVirtualConstructor();
+
+		if (!method_exists($obj, $func)) {
+
+			return array();
+		}
+
+		return array($class, $func);
+	}
 }

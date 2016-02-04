@@ -53,17 +53,12 @@ class APIRESTResponseJSONPage extends APIRESTJSONPage {
 
 	protected function _getResponse() {
 
-		$class = LoadInit::stGetClassCaseInsensitive($this->object);
-
-		$func = "st" . ucfirst($this->function);
-
-		$obj = $class::stVirtualConstructor();
-
-		if (!method_exists($obj, $func)) {
-
+		$callableMethod = $this->_getCallableMethod();
+		if ($callableMethod === array()) {
 			return array();
 		}
 
+		list($class, $func) = $callableMethod;
 		$params = $this->_getFunctionParams($class, $func);
 
 		if (!$params) {
@@ -72,7 +67,7 @@ class APIRESTResponseJSONPage extends APIRESTJSONPage {
 			return array();
 		}
 
-		$res = call_user_func_array(array($class, $func), $params);
+		$res = call_user_func_array($callableMethod, $params);
 
 		return array("response" => $res,
 			     "class" => $class,
