@@ -28,6 +28,7 @@ class DBMySQLConnection extends ObjectConfigurable {
 	}
 
 	static function stGetConnection() {
+
 		return DBMySQLConnection::stVirtualConstructor()->getLink();
 	}
 
