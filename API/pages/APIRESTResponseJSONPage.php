@@ -2,7 +2,7 @@
 /**
  * Dispatching de URLs
  */
-class APIRESTResponseJSONPage extends APIJSONPage {
+class APIRESTResponseJSONPage extends APIRESTJSONPage {
 
 	// Errores
 	const ERROR_CODE_INVALID_FUNCTION_PARAM = "APIRESTResponseJSONPage::ERROR_CODE_INVALID_FUNCTION_PARAM";
@@ -10,24 +10,6 @@ class APIRESTResponseJSONPage extends APIJSONPage {
 	public $objFields = array("object" => "\d",
 				  "function" => "\d",
 	);
-
-	protected function __construct($params = array()) {
-
-		// Mergeamos los params que ya tenemos con los valores que vengan del post o del get
-		// Ala ! Libres domingos y domingas
-		$params = array_merge($params, $this->_getRequestParams());
-
-		parent::__construct($params);
-	}
-
-	private function _getRequestParams() {
-
-		$requestMethod = $_SERVER["REQUEST_METHOD"];
-
-		$requestParams = eval('return $_' . $requestMethod . ';');
-
-		return array("functionsParams" => $requestParams);
-	}
 
 	private function _getFunctionParams($class, $func) {
 
@@ -39,15 +21,15 @@ class APIRESTResponseJSONPage extends APIJSONPage {
 		}
 
 		// Nos aseguramos que si nos pasamos el mismo numero de parametros que los que esperamos esten bien
-		if (count($this->functionsParams) == count($expectedParams)
-		    && array_diff(array_keys($this->functionsParams), $expectedParams) !== array()) {
+		if (count($this->queryStringParams) == count($expectedParams)
+		    && array_diff(array_keys($this->queryStringParams), $expectedParams) !== array()) {
 			    return false;
 		}
 
 		$goodParams = true;
 
 		$funtionParams = array();
-		foreach ($this->functionsParams as $param => $value) {
+		foreach ($this->queryStringParams as $param => $value) {
 
 			if (in_array($param, $expectedParams)) {
 				$funtionParams[] = $value;
