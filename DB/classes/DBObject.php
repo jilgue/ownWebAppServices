@@ -25,6 +25,7 @@ abstract class DBObject extends ObjectPersistent {
 		$dbObj = DBMySQLConnection::stVirtualConstructor($table)->getObj(array($this->fieldId => $this->objectId));
 
 		$fields = DBObject::stDBToObjFields($table);
+
 		foreach ($dbObj as $dbField => $data) {
 			$this->$fields[$dbField] = $data;
 		}

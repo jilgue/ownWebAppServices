@@ -15,7 +15,8 @@ abstract class ObjectPersistent extends ObjectConfigurable {
 		$fieldId = static::stGetFieldConfigFiltered(array("identifier" => true));
 
 		// Si no existe, ponemos como no ok y paramos
-		if (static::stExists($this->$fieldId) === false) {
+		if (!isset($this->$fieldId)
+		    || static::stExists($this->$fieldId) === false) {
 			$this->ok = false;
 			return;
 		}

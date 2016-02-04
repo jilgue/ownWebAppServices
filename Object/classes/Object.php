@@ -40,7 +40,9 @@ abstract class Object {
 		$this->params = $params;
 
 		foreach ($this->objFields as $objField => $value) {
-			if (!isset($this->$objField)) {
+			if (!isset($this->$objField)
+			    // Si es un DT no se autocarga
+			    && !isset($value["DT"])) {
 				$this->$objField = $value;
 			}
 		}
