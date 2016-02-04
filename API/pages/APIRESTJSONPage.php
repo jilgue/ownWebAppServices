@@ -37,6 +37,8 @@ abstract class APIRESTJSONPage extends APIJSONPage {
 
 		if (!method_exists($obj, $func)) {
 
+			LogsErrors::stCreate(array("errorCode" => APIRESTResponseJSONPage::ERROR_CODE_INVALID_FUNCTION_PARAM,
+						   "function" => "_getFunctionParams"));
 			return array();
 		}
 
