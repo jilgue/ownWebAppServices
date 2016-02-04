@@ -26,9 +26,14 @@ abstract class APIRESTJSONPage extends APIJSONPage {
 
 		$class = LoadInit::stGetClassCaseInsensitive($this->object);
 
-		$func = "st" . ucfirst($this->function);
+		$func = $this->function;
 
 		$obj = $class::stVirtualConstructor();
+
+		// Permitimos que no pasen la funcion tan cual
+		if (!method_exists($obj, $func)) {
+			$func = "st" . ucfirst($this->function);
+		}
 
 		if (!method_exists($obj, $func)) {
 
