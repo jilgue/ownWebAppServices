@@ -61,7 +61,7 @@ class APIRESTResponseJSONPage extends APIRESTJSONPage {
 
 		if (!method_exists($obj, $func)) {
 
-			return;
+			return array();
 		}
 
 		$params = $this->_getFunctionParams($class, $func);
