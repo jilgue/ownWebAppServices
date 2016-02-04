@@ -7,5 +7,5 @@ $config["DBMySQLConnection"] = array("host" => "localhost",
 				     "database" => "bam_uploads",
 );
 
-$config["DBMySQLConnection"]["objField"]["table"] = array("DT" => "DataTypeIdDT",
+$config["DBMySQLConnection"]["objField"]["table"] = array("DT" => "DataTypeAllValueDT",
 							  "DTParams" => array("identifier" => true));
