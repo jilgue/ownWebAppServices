@@ -22,6 +22,19 @@ class APIRESTConfigJSONPage extends APIRESTJSONPage {
 		return array_intersect_key($fields, array_flip($expectedParams));
 	}
 
+	private function _formatFields($fields, $class) {
+
+		$obj = $class::stVirtualConstructor();
+
+		$ret = array();
+		foreach ($fields as $field => $params) {
+
+			$DT = $obj->getFieldDTObj($field);
+			$ret[] = array_merge(array("field" => $field), get_object_vars($DT));
+		}
+		return $ret;
+	}
+
 	protected function _getResponse() {
 
 		$callableMethod = $this->_getCallableMethod();
@@ -31,7 +44,8 @@ class APIRESTConfigJSONPage extends APIRESTJSONPage {
 
 		list($class, $func) = $callableMethod;
 
-		// Esto no deberia fallar, si no malo...
-		return $this->_getFields($class, $func);
+		$fields = $this->_getFields($class, $func);
+
+		return array("config" => $this->_formatFields($fields, $class));
 	}
 }
