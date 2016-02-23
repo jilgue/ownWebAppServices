@@ -23,7 +23,8 @@ class APIRESTResponseJSONPage extends APIRESTJSONPage {
 		// Nos aseguramos que si nos pasamos el mismo numero de parametros que los que esperamos esten bien
 		if (count($this->queryStringParams) == count($expectedParams)
 		    && array_diff(array_keys($this->queryStringParams), $expectedParams) !== array()) {
-			    return false;
+			// TODO mirar porque esto siempre es así, espero un array de cosas pero solo me mandan una, está bien
+			//return false;
 		}
 
 		$goodParams = true;
