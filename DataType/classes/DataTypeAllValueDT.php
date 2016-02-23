@@ -12,8 +12,4 @@ class DataTypeAllValueDT extends DataType {
 	function isValidValue($value) {
 		return true;
 	}
-
-	// TODO
-	protected function _getDBColumnType($params) {
-	}
 }

@@ -48,21 +48,26 @@ abstract class DataType extends ObjectConfigurable {
 		return true;
 	}
 
-	abstract protected function _getDBColumnType($params);
+	protected function _getDBColumnType($params) {
+
+		$ret =  "$params[DBType] ($params[maxLength]) NOT NULL";
+
+		if (isset($this->default)) {
+			$ret = $ret . " DEFAULT $this->default";
+		}
+
+		return $ret;
+	}
+
 
 	function getDBColumnType($field) {
 
-		$params = array_keys($this::$objField);
+		$params = array_merge(array_keys($this->objFields), array_keys($this->params));
+
 		$_params = array();
 		foreach ($params as $param) {
 
-			$_params[$param] = isset($this->$param) ? $this->$param : $this::$objField["$param"];
-
-			// Si es un array puede ser que nos pasen un valor de los posibles
-			if (is_array($this::$objField["$param"])
-			    && isset($this::$objField["$param"][$_params[$param]])) {
-				$_params[$param] = $this::$objField["$param"][$_params[$param]];
-			}
+			$_params[$param] = isset($this->$param) ? $this->$param : $this->objFields["$param"];
 		}
 
 		return "`" . DBObject::stObjFieldToDBField($field) . "` " . $this->_getDBColumnType($_params);
