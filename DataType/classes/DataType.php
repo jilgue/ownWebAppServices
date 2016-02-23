@@ -50,10 +50,18 @@ abstract class DataType extends ObjectConfigurable {
 
 	protected function _getDBColumnType($params) {
 
-		$ret =  "$params[DBType] ($params[maxLength]) NOT NULL";
+		$ret = "$params[DBType]";
+
+		if ($params["maxLength"]) {
+			$ret = $ret . " ($params[maxLength])";
+		}
+
+		if (!$this->optional) {
+			$ret = $ret . " NOT NULL";
+		}
 
 		if (isset($this->default)) {
-			$ret = $ret . " DEFAULT $this->default";
+			$ret = $ret . " DEFAULT '$this->default'";
 		}
 
 		return $ret;
