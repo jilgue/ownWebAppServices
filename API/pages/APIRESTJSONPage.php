@@ -19,6 +19,16 @@ abstract class APIRESTJSONPage extends APIJSONPage {
 
 		$requestParams = eval('return $_' . $requestMethod . ';');
 
+		// Si es un post puede ser que angular nos mande un json
+		if ($requestMethod == "POST") {
+			if (count($requestParams) == 1
+			    && reset($requestParams) == ""
+			    && @json_decode(key($requestParams))) {
+
+				$requestParams = json_decode(file_get_contents('php://input'),true);
+			}
+		}
+
 		return array("queryStringParams" => $requestParams);
 	}
 
