@@ -92,6 +92,24 @@ abstract class ObjectPersistentSearch extends Object {
 		return true;
 	}
 
+	abstract protected function _getResults();
+
+	function getResults() {
+
+		$ret = array();
+		foreach ($this->_getResults() as $key => $result) {
+			foreach ($result as $field => $value) {
+				$ret[$key][DBObject::stDBFieldToObjField($field)] = $value;
+			}
+		}
+		return $ret;
+	}
+
+	function getResult() {
+
+		return reset($this->getResults());
+	}
+
 	static function stGetResults($filters, $order = false, $page = 1, $limit = 10) {
 
 		$search = static::stVirtualConstructor(array("filters" => $filters,
