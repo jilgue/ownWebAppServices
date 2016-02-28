@@ -51,6 +51,11 @@ abstract class ObjectPersistentSearch extends Object {
 		$class = $this->_getSearchClass();
 		$classFieldsConfig = $class::stGetFieldsConfig();
 
+		if (!is_array($this->filters)) {
+			// TODO error
+			return false;
+		}
+
 		foreach ($this->filters as $filter => & $value) {
 
 			// Si todavia no es un array ponemos el operador por defecto
@@ -94,6 +99,17 @@ abstract class ObjectPersistentSearch extends Object {
 							     "page" => $page,
 							     "limit" => $limit,
 		));
-		var_dump($search);die;
+
+		if ($search->count == 0) {
+			return array();
+		}
+
+		if ($search->count == 1) {
+			return $search->getResult();
+		}
+
+		if ($search->count > 1) {
+			return $search->getResults();
+		}
 	}
 }
