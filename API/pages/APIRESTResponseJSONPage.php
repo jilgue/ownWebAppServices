@@ -16,11 +16,22 @@ class APIRESTResponseJSONPage extends APIRESTJSONPage {
 		$refFunc = new ReflectionMethod($class, $func);
 
 		$expectedParams = array();
+
 		foreach($refFunc->getParameters() as $validFunctionParam){
-			$expectedParams[] = $validFunctionParam->name;
+
+			if ($validFunctionParam->isOptional()) {
+
+				$expectedParams[$validFunctionParam->getName()] = array("default" => $validFunctionParam->getDefaultValue(),
+											// TODO guardamos el tipo porque sólo se puede meter un array cuando se espera un array, pero no se si lo necesitaré
+											"type" => gettype($validFunctionParam->getDefaultValue()));
+				continue;
+			}
+
+			// Indicamos que es obligatorio
+			$expectedParams[$validFunctionParam->getName()] = false;
 		}
 
-		// Nos aseguramos que si nos pasamos el mismo numero de parametros que los que esperamos esten bien
+		// Nos aseguramos que si nos pasamos el mismo número de parametros que los que esperamos estén bien
 		if (count($this->queryStringParams) == count($expectedParams)
 		    && array_diff(array_keys($this->queryStringParams), $expectedParams) !== array()) {
 			// TODO mirar porque esto siempre es así, espero un array de cosas pero solo me mandan una, está bien
@@ -30,26 +41,50 @@ class APIRESTResponseJSONPage extends APIRESTJSONPage {
 		$goodParams = true;
 
 		$funtionParams = array();
+
+		// TODO ordenar parametros de queryStringParams con $expectedParams
+
+		// Contador de parámetros que ya hemos procesado
+		$i = 0;
 		foreach ($this->queryStringParams as $param => $value) {
 
-			if (in_array($param, $expectedParams)) {
-				$funtionParams[] = $value;
+			if (isset($expectedParams[$param])) {
+
+				$funtionParams[$param] = $value;
 				$goodParams = true;
+
+				$i++;
 				continue;
+
 			} else {
 				if ($goodParams) {
 
-					$funtionParams[][$param] = $value;
+					$funtionParams[array_keys($expectedParams)[$i]][$param] = $value;
 					$goodParams = false;
+
+					$i++;
 					continue;
 				} else {
 					end($funtionParams);
 					$funtionParams[key($funtionParams)][$param] = $value;
+
+					$i++;
 				}
 			}
 		}
 
-		return $funtionParams;
+		$ret = array();
+		foreach ($expectedParams as $param => $options) {
+
+			if (isset($funtionParams[$param])) {
+				$ret[$param] = $funtionParams[$param];
+			} else {
+				// No debería pasar que no tengamos un valor por defecto de algo que no tenemos xDD muy bien explicado César xD
+				$ret[$param] = $options["default"];
+			}
+		}
+
+		return $ret;
 	}
 
 	protected function _getResponse() {
@@ -68,7 +103,7 @@ class APIRESTResponseJSONPage extends APIRESTJSONPage {
 			return array();
 		}
 
-		$res = call_user_func_array($callableMethod, $params);
+		$res = call_user_func_array($callableMethod, array_values($params));
 
 		return array("response" => $res,
 			     "class" => $class,
