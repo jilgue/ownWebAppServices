@@ -110,7 +110,7 @@ abstract class ObjectPersistentSearch extends Object {
 		return reset($this->getResults());
 	}
 
-	static function stGetResults($filters, $order = false, $page = 1, $limit = 10) {
+	static function stGetResults($filters, $order = false, $page = 1, $limit = 10, $noArray = false) {
 
 		$search = static::stVirtualConstructor(array("filters" => $filters,
 							     "order" => $order,
@@ -122,11 +122,13 @@ abstract class ObjectPersistentSearch extends Object {
 			return array();
 		}
 
-		if ($search->count == 1) {
+		if ($noArray === false
+		    && $search->count == 1) {
 			return $search->getResult();
 		}
 
-		if ($search->count > 1) {
+		if ($search->count > 1
+		    || $noArray !== false) {
 			return $search->getResults();
 		}
 	}
