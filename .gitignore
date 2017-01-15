@@ -1,3 +1,4 @@
 .ac-php-conf.json
 bin/
 vendor/
+.idea/
