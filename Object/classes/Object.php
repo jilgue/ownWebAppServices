@@ -22,12 +22,21 @@ abstract class Object {
         $this->_autoloadParams($params);
     }
 
+    /**
+     * Carga en $this->hierarchy la jerarquía de la clase
+     * return null
+     */
     private function _loadHierarchy() {
 
         $class = get_class($this);
         $this->hierarchy = Object::stGetHierarchy($class);
     }
 
+
+    /**
+     * Carga en this los parametros que llegan al constructo
+     * return null
+     */
     private function _autoloadParams($params) {
 
         if (is_array($params)) {
@@ -48,9 +57,13 @@ abstract class Object {
         }
     }
 
+    /**
+     * Carga en this los parametros que llegan al constructo
+     * return null
+     */
     final static private function _stFinalConstruct($object, $params = array()) {
 
-        // El objecto esta mal y no viene ya sin parámetros, lo devolvemos vacio
+        // El objecto esta mal y nos viene ya sin parámetros, lo devolvemos vacio
         if ($object->ok === false
             && count($params) != 0) {
             $class = get_class($object);
@@ -82,7 +95,7 @@ abstract class Object {
             return Object::_stFinalConstruct(new $class($params), $params);
         }
 
-        // Si no es así pasamos todos los parametros y cada clase sabra que hacer con ellos, por el bien que le trae xD
+        // Si no es así pasamos todos los parametros, cada clase sabra que hacer con ellos, por el bien que le trae xD
         if (is_array($params)) {
             return Object::_stFinalConstruct(new $class(array_merge($args, $params)), $params);
         }

@@ -6,7 +6,7 @@
 class LoadInit {
 
 	/**
-	 * Autocarga la clase $class
+	 * Devuelve la ruta a una clase
 	 */
 	static function stGetClassPath($class, $caseInsensitive = false) {
 
@@ -26,24 +26,15 @@ class LoadInit {
 
 	static function stGetClassCaseInsensitive($class) {
 
-		$path = static::stGetClassPath($class, true);
+		$path = LoadInit::stGetClassPath($class, true);
 
 		preg_match("%/(.[^/]*)\.php%", $path, $match);
 		return $match[1];
 	}
 
 	/**
-	 * Autocarga la clase $class
+	 * Carga en cache la lista de paquetes
 	 */
-	static function stAutoload($class) {
-
-		$classPath = static::stGetClassPath($class);
-
-		if ($classPath !== false) {
-			require_once $classPath;
-		}
-	}
-
 	static function stPackagesLoad() {
 
 		static $stCache = array();
@@ -69,6 +60,18 @@ class LoadInit {
 		$stCache["packageList"] = $ret;
 
 		return $ret;
+	}
+
+	/**
+	 * Autocarga la clase $class
+	 */
+	static function stAutoload($class) {
+
+		$classPath = LoadInit::stGetClassPath($class);
+
+		if ($classPath !== false) {
+			require_once $classPath;
+		}
 	}
 }
 
