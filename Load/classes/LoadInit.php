@@ -1,80 +1,44 @@
 <?php
 
+namespace ownWebAppServices\Load\classes;
+
+use ownWebAppServices\File\classes\FileSystem;
+
 /**
- * Carga inicial
+ * Class LoadInit
+ * @package ownWebAppServices\Load\classes
  */
-class LoadInit {
+class LoadInit
+{
+    /**
+     * @var string
+     */
+    public static $path = "/deploy/projects/ownWebAppServices/";
 
-	/**
-	 * Devuelve la ruta a una clase
-	 */
-	static function stGetClassPath($class, $caseInsensitive = false) {
+    /**
+     * @return array|mixed
+     */
+    public static function stPackagesLoad()
+    {
 
-		if (!$caseInsensitive) {
-			$cmd = "find " . $GLOBALS["path"] . " -name " . $class . ".php";
-		} else {
-			$cmd = "find " . $GLOBALS["path"] . " -iname " . $class . ".php";
-		}
+        static $stCache = array();
 
-		exec($cmd, $out);
+        if (isset($stCache["packageList"])) {
+            return $stCache["packageList"];
+        }
 
-		if (count($out) == 1) {
-			return $out[0];
-		}
-		echo "$class dont exist";die;
-	}
+        $paths = FileSystem::stGetListDir(LoadInit::$path);
 
-	static function stGetClassCaseInsensitive($class) {
+        $ret = array();
+        foreach ($paths as $path) {
+            if (preg_match("#^[A-Z][A-z]{1,}$#", $path, $match) === 1) {
+                $ret[] = $match[0];
+            }
+        }
 
-		$path = LoadInit::stGetClassPath($class, true);
+        // Guardamos en "cache" la lista de paquetes y el path
+        $stCache["packageList"] = $ret;
 
-		preg_match("%/(.[^/]*)\.php%", $path, $match);
-		return $match[1];
-	}
-
-	/**
-	 * Carga en cache la lista de paquetes
-	 */
-	static function stPackagesLoad() {
-
-		static $stCache = array();
-
-		if (isset($stCache["packageList"])) {
-			return $stCache["packageList"];
-		}
-
-		// Trapi autoload del config de Load
-		require_once( dirname( __FILE__ ) . '/../conf/config.inc');
-		$cmd = "ls -d " . $config["path"] . "*/";
-
-		exec($cmd, $out);
-
-		$ret = array();
-		foreach ($out as $path) {
-			preg_match("#.*/([A-z]{1,}[^/])#", $path, $match);
-			$ret[] = $match[1];
-		}
-
-		// Guardamos en "cache" la lista de paquetes y el path
-		$GLOBALS["path"] = $config["path"];
-		$stCache["packageList"] = $ret;
-
-		return $ret;
-	}
-
-	/**
-	 * Autocarga la clase $class
-	 */
-	static function stAutoload($class) {
-
-		$classPath = LoadInit::stGetClassPath($class);
-
-		if ($classPath !== false) {
-			require_once $classPath;
-		}
-	}
+        return $ret;
+    }
 }
-
-spl_autoload_register(array("LoadInit", "stAutoload"));
-
-LoadInit::stPackagesLoad();

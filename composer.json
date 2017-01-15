@@ -1,34 +1,39 @@
 {
-  "name": "ownWebAppServices",
-  "description": "Services for ownWebApp",
-  "minimum-stability": "stable",
-  "type": "project",
-  "license": "GPL-3.0",
-  "authors": [
-    {
-      "name": "César M. Cristóbal",
-      "email": "cesar@callepuzzle.com"
-    }
-  ],
-  "require": {
-    "oomphinc/composer-installers-extender": "^1.1"
-  },
-  "require-dev": {
-    "bitban/php-code-quality-tools": "dev-master"
-  },
-  "config": {
-    "bin-dir": "bin/",
-    "optimize-autoloader": true,
-    "preferred-install": {
-      "*": "dist"
-    }
-  },
-  "scripts": {
-    "post-install-cmd": [
-      "Bitban\\PhpCodeQualityTools\\Composer\\ScriptHandler::checkHooks"
+    "name": "callepuzzle/ownWebAppServices",
+    "description": "Services for ownWebApp",
+    "type": "project",
+    "license": "GPL-3.0",
+    "authors": [
+	{
+	    "name": "César M. Cristóbal",
+	    "email": "cesar@callepuzzle.com"
+	}
     ],
-    "post-update-cmd": [
-      "Bitban\\PhpCodeQualityTools\\Composer\\ScriptHandler::checkHooks"
-    ]
-  }
+    "minimum-stability": "stable",
+    "autoload": {
+	"psr-4": {
+	    "ownWebAppServices\\": "."
+	}
+    },
+    "require": {
+	"oomphinc/composer-installers-extender": "^1.1"
+    },
+    "require-dev": {
+	"bitban/php-code-quality-tools": "dev-master"
+    },
+    "config": {
+	"bin-dir": "bin/",
+	"optimize-autoloader": true,
+	"preferred-install": {
+	    "*": "dist"
+	}
+    },
+    "scripts": {
+	"post-install-cmd": [
+	    "Bitban\\PhpCodeQualityTools\\Composer\\ScriptHandler::checkHooks"
+	],
+	"post-update-cmd": [
+	    "Bitban\\PhpCodeQualityTools\\Composer\\ScriptHandler::checkHooks"
+	]
+    }
 }
