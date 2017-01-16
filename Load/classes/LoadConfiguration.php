@@ -2,36 +2,12 @@
 
 namespace ownWebAppServices\Load\classes;
 
-use ownWebAppServices\Load\classes\LoadInit;
-
 /**
  * Class LoadConfiguration
  * @package ownWebAppServices\Load\classes
  */
 class LoadConfiguration
 {
-
-    /**
-     * Obtiene la tabla con todas las rutas disponibles
-     */
-    public static function stGetDispatchTable()
-    {
-
-        $ret = array();
-        foreach (LoadInit::stPackagesLoad() as $package) {
-
-            $path = LoadInit::$path . $package . "/conf/dispatch.inc";
-            if (!is_file($path)) {
-                continue;
-            }
-
-            $config = LoadConfiguration::stRequireConfig($path);
-
-            $ret = array_merge($ret, $config);
-        }
-
-        return $ret;
-    }
 
     /**
      * @param $path
