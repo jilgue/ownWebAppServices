@@ -11,9 +11,9 @@ class LoadConfiguration
 
     /**
      * @param $path
-     * @return mixed
+     * @return array
      */
-    public static function stRequireConfig($path)
+    public static function stRequireConfig($path): array
     {
 
         static $stCache = array();
@@ -24,7 +24,7 @@ class LoadConfiguration
 
         require_once $path;
 
-        if (!isset($config)) {
+        if (!isset($config) || !is_array($config)) {
             return array();
         }
 
