@@ -1,34 +1,29 @@
 <?php
 
-/**
- *
- */
-class Core {
+namespace ownWebAppServices\Core\classes;
 
-	static function stGetClassesList($type) {
+use ownWebAppServices\File\classes\FileSystem;
 
-		$packageList = LoadInit::stPackagesLoad();
+class Core
+{
 
-		$raidPath = $GLOBALS["path"];
+    /**
+     * @return null|string
+     */
+    public static function stGetRootPath()
+    {
+        if (!isset($_SERVER["SCRIPT_FILENAME"])) {
+            // TODO fatal
+            return null;
+        }
 
-		$ret = array();
-		foreach ($packageList as $package) {
+        $scriptFileName = $_SERVER["SCRIPT_FILENAME"];
 
-			$path = $raidPath . $package . "/" . $type . "/";
-			if (!file_exists($path)) {
-				continue;
-			}
-			$cmd = "ls " . $path . $package . "*";
+        if (!($rootPath = FileSystem::stGetAbsolutePath($scriptFileName))) {
+            // TODO fatal
+            return null;
+        }
 
-			// $out no se borra se mantiene en el entorno de la función
-			exec($cmd, $out);
-		}
-
-		foreach ($out as $scriptPath) {
-			preg_match("#.*/([A-z]{1,})#", $scriptPath, $match);
-			$ret[] = $match[1];
-		}
-
-		return $ret;
-	}
+        return $rootPath;
+    }
 }
