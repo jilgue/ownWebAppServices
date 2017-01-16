@@ -10,6 +10,7 @@ use ownWebAppServices\File\classes\FileSystem;
  */
 class LoadInit
 {
+
     /**
      * @var string
      */

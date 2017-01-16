@@ -2,7 +2,7 @@
 
 namespace ownWebAppServices\Load\classes;
 
-use ownWebAppServices\Reflection\classes\Reflection as ownReflection;
+use ownWebAppServices\Load\classes\LoadInit;
 
 /**
  * Class LoadConfiguration
@@ -17,14 +17,15 @@ class LoadConfiguration
     public static function stGetDispatchTable()
     {
 
-        $cmd = "find " . $GLOBALS["path"] . " -name dispatch.inc";
-
-        exec($cmd, $out);
-
         $ret = array();
-        foreach ($out as $path) {
+        foreach (LoadInit::stPackagesLoad() as $package) {
 
-            $config = LoadConfiguration::_stRequireConfig($path);
+            $path = LoadInit::$path . $package . "/conf/dispatch.inc";
+            if (!is_file($path)) {
+                continue;
+            }
+
+            $config = LoadConfiguration::stRequireConfig($path);
 
             $ret = array_merge($ret, $config);
         }
@@ -33,83 +34,10 @@ class LoadConfiguration
     }
 
     /**
-     * Obtiene el config de una clase
-     */
-    public static function stGetConfigClass($class = "")
-    {
-
-        $class = $class != "" ? $class : LoadConfiguration::stGetPreviousCalledClass();
-
-        if (($path = LoadConfiguration::_stGetConfigPath($class)) === false) {
-            return false;
-        }
-
-        $config = LoadConfiguration::_stRequireConfig($path);
-
-        if (isset($config[$class])) {
-
-            return $config[$class];
-        }
-
-        return false;
-    }
-
-    /**
-     * Obtiene el config de una clase
-     */
-    public static function stGetConfigVar($var, $class = "")
-    {
-
-        $class = $class != "" ? $class : static::stGetPreviousCalledClass();
-
-        if (($path = LoadConfiguration::_stGetConfigPath($class)) === false) {
-            return false;
-        }
-
-        $config = LoadConfiguration::_stRequireConfig($path);
-
-        if (isset($config[$var])) {
-            return $config[$var];
-        }
-        return false;
-    }
-
-    /**
-     * Obtiene el config de una clase
-     */
-    public static function stGetConfigVarClass($var, $class = "")
-    {
-
-        static $stCache = array();
-
-        $class = $class != "" ? $class : static::stGetPreviousCalledClass();
-
-        // Quiza ya haya sido cargado
-        if (isset($stCache[$class][$var])) {
-            return $stCache[$class][$var];
-        }
-
-        $path = LoadConfiguration::_stGetConfigPath($class);
-
-        if ($path === false) {
-            return false;
-        }
-
-        $config = LoadConfiguration::_stRequireConfig($path);
-
-        if (isset($config[$class][$var])) {
-            $stCache[$class][$var] = $config[$class][$var];
-            return $config[$class][$var];
-        }
-
-        return false;
-    }
-
-    /**
      * @param $path
      * @return mixed
      */
-    private static function _stRequireConfig($path)
+    public static function stRequireConfig($path)
     {
 
         static $stCache = array();
@@ -120,29 +48,12 @@ class LoadConfiguration
 
         require_once $path;
 
+        if (!isset($config)) {
+            return array();
+        }
+
         $stCache[$path] = $config;
 
         return $config;
-    }
-
-    /**
-     * @param $class
-     * @return bool|string
-     */
-    private static function _stGetConfigPath($class)
-    {
-
-        foreach (LoadInit::stPackagesLoad() as $package) {
-
-            if (preg_match("/" . $package . "[[:alnum:]]{0,}/", $class, $match)) {
-
-                $path = $GLOBALS["path"] . $package . "/conf/config.inc";
-                if (is_file($path)) {
-                    return $path;
-                }
-            }
-        }
-
-        return false;
     }
 }
