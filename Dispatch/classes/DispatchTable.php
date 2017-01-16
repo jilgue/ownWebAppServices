@@ -3,7 +3,7 @@
 namespace ownWebAppServices\Dispatch\classes;
 
 use ownWebAppServices\Load\classes\LoadConfiguration;
-use ownWebAppServices\Load\classes\LoadInit;
+use ownWebAppServices\Core\classes\CorePackages;
 
 /**
  * Class DispatchTable
@@ -19,9 +19,9 @@ class DispatchTable
     {
 
         $ret = array();
-        foreach (LoadInit::stPackagesLoad() as $package) {
+        foreach (CorePackages::stGetPackagesList() as $package) {
 
-            $path = LoadInit::$path . $package . "/conf/dispatch.inc";
+            $path = CorePackages::stGetPackagePath($package) . "/conf/dispatch.inc";
             if (!is_file($path)) {
                 continue;
             }
