@@ -18,4 +18,11 @@ class LoadInit
     {
         return (bool) $GLOBALS["packages"] = CorePackages::stGetPackagesList();
     }
+
+    public static function stAutoload($class)
+    {
+        //var_dump($class);
+    }
 }
+
+spl_autoload_register(__NAMESPACE__ . "\LoadInit::stAutoload");
