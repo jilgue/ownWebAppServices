@@ -15,8 +15,11 @@ class FileSystem
     public static function stGetListDir($path): array
     {
         $ret = array();
+
         foreach (scandir($path) as $item) {
-            if (is_dir($item)) {
+
+            $_item = $path . $item;
+            if (is_dir($_item)) {
                 $ret[] = $item;
             }
         }
@@ -31,8 +34,11 @@ class FileSystem
     public static function stGetListFiles($path): array
     {
         $ret = array();
+
         foreach (scandir($path) as $item) {
-            if (is_file($item)) {
+
+            $_item = $path . $item;
+            if (is_file($_item)) {
                 $ret[] = $item;
             }
         }
