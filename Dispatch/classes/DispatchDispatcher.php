@@ -1,103 +1,136 @@
 <?php
 
+namespace ownWebAppServices\Dispatch\classes;
+
+use ownWebAppServices\Load\classes\LoadConfiguration;
+
 /**
- * Dispatching de URLs
+ * Class DispatchDispatcher
+ * @package ownWebAppServices\Dispatch\classes
  */
-class DispatchDispatcher {
+class DispatchDispatcher
+{
 
-	public $request;
+    /**
+     * @param $URL
+     * @return string
+     */
+    private static function stGetURLMatch($URL)
+    {
 
-	private static function _stGetURLMatch($URL) {
+        $_URL = $URL;
 
-		$_URL = $URL;
+        // Limpiamos la url de los parametros get
+        if (preg_match("/(.*)\?/", $URL, $match) === 1) {
+            $_URL = $match[1];
+        }
 
-		// Limpiamos la url de los parametros get
-		if (preg_match("/(.*)\?/", $URL, $match) === 1) {
-			$_URL = $match[1];
-		}
+        // Si no termina en .algo añadimos una barra
+        if (preg_match("#(?:.(?!/))+\.([a-z]+)#", $_URL, $match) === 1) {
+            // TODO controlar las terminaciones que permitimos
+        } else {
+            $_URL = $_URL . "/";
+        }
 
-		// Si no termina en .algo añadimos una barra
-		if (preg_match("#(?:.(?!/))+\.([a-z]+)#", $_URL, $match) === 1) {
-			// TODO controlar las terminaciones que permitimos
-		} else {
-			$_URL = $_URL . "/";
-		}
+        return $_URL;
+    }
 
-		return $_URL;
-	}
+    /**
+     * @param $URL
+     * @return mixed
+     */
+    public static function stProcessRequest($URL)
+    {
 
-	static function stProcessRequest($URL) {
+        $_URL = DispatchDispatcher::stGetURLMatch($URL);
 
-		$_URL = DispatchDispatcher::_stGetURLMatch($URL);
+        $dispatchTable = DispatchTable::stGetDispatchTable();
+        //var_dump($dispatchTable);
+        //die;
+        foreach ($dispatchTable as $urlMatch => $config) {
 
-		$dispatchTable = LoadConfig::stGetDispatchTable();
+            // TODO puede hacer problemas con la @ ?
+            if (preg_match("@" . $urlMatch . "@", $_URL, $match) === 1) {
 
-		//DispatchDispatcher::$request = $URL;
+                $obj = call_user_func_array(
+                    array($config["class"], "stVirtualConstructor"),
+                    array(DispatchDispatcher::stGetUrlArg($URL, $urlMatch, $config))
+                );
+                return $obj->printOutput();
+            }
+        }
 
-		foreach ($dispatchTable as $urlMatch => $config) {
+        echo DispatchDispatcher::stPageNotFound();
+    }
 
-			// TODO puede hacer problemas con la @ ?
-			if (preg_match("@" . $urlMatch . "@", $_URL, $match) === 1) {
+    /**
+     * @param $URL
+     * @param $urlMatch
+     * @param $config
+     * @return array
+     */
+    public static function stGetUrlArg($URL, $urlMatch, $config)
+    {
 
-				$obj = call_user_func_array(array($config["class"], "stVirtualConstructor"), array(DispatchDispatcher::stGetUrlArg($URL, $urlMatch, $config)));
-				return $obj->printOutput();
-			}
-		}
+        $URL = DispatchDispatcher::stRelativizeUrl($URL);
 
-		echo DispatchDispatcher::stPageNotFound();
-	}
+        $class = $config["class"];
 
-	static function stGetUrlArg($URL, $urlMatch, $config) {
+        $ret = array();
+        if (preg_match_all("%<(.[^>]*)%", $urlMatch, $match)) {
 
-		$URL = DispatchDispatcher::stRelativizeUrl($URL);
+            preg_match("%" . $urlMatch . "%", $URL, $match);
 
-		$class = $config["class"];
+            foreach ($match as $param => $value) {
 
-		$ret = array();
-		if (preg_match_all("%<(.[^>]*)%", $urlMatch, $match)) {
+                if (isset($class::stGetObjFields()[$param])) {
+                    $ret[$param] = $value;
+                }
+            }
+        }
 
-			preg_match("%" . $urlMatch . "%", $URL, $match);
+        if (isset($config["method"])) {
+            $method = $config["method"];
+        } else {
+            return $ret;
+        }
 
-			foreach ($match as $param => $value) {
+        foreach ($method as $param => $value) {
 
-				if (isset($class::stGetObjFields()[$param])) {
-					$ret[$param] = $value;
-				}
-			}
-		}
+            // No soportamos page.html?myarray[]=1
+            if ($method != $_FILES
+                && is_array($value)
+            ) {
+                continue;
+            }
 
-		if (isset($config["method"])) {
-			$method = $config["method"];
-		} else {
-			return $ret;
-		}
+            // TODO soporte para optionalGETParams y obligatoryGETParams
 
-		foreach ($method as $param => $value) {
+            $ret[$param] = $value;
+        }
 
-			// No soportamos page.html?myarray[]=1
-			if ($method != $_FILES
-			    && is_array($value)) {
-				continue;
-			}
+        return $ret;
+    }
 
-			// TODO soporte para optionalGETParams y obligatoryGETParams
+    /**
+     * @param $URL
+     * @return mixed
+     */
+    public static function stRelativizeUrl($URL)
+    {
 
-			$ret[$param] = $value;
-		}
+        $urlBase = LoadConfiguration::stGetConfigClass()["urlBase"];
 
-		return $ret;
-	}
+        return preg_replace("%$urlBase%", "", $URL);
+    }
 
-	static function stRelativizeUrl($URL) {
+    /**
+     * @return string
+     */
+    public static function stPageNotFound()
+    {
 
-		$urlBase = LoadConfig::stGetConfigClass()["urlBase"];
-
-		return preg_replace("%$urlBase%", "", $URL);
-	}
-
-	static function stPageNotFound() {
-
-		$output = '<!doctype html>
+        $output = '<!doctype html>
 <html>
         <head>
                 <meta charset="utf-8">
@@ -108,6 +141,6 @@ class DispatchDispatcher {
                 <p><a href="/">Home page</a></p>
         </body>
 </html>';
-		return $output;
-	}
+        return $output;
+    }
 }
