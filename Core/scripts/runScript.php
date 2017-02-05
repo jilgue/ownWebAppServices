@@ -1,23 +1,28 @@
 <?php
+use ownWebAppServices\Load\classes\LoadInit;
 
-/**
- *
- */
+require_once __DIR__ . '/../../vendor/autoload.php';
+
+LoadInit::stPackagesLoad();
+
+use ownWebAppServices\Core\classes\Core;
+use ownWebAppServices\Core\classes\CoreClasses;
+use ownWebAppServices\Logs\classes\Logs;
+
+$rootPath = Core::stGetRootPath();
 
 global $argv;
-
-require_once( dirname( __FILE__ ) . '/../../Load/classes/LoadInit.php');
 
 // No pasan ningun argumento sacamos la lista de scripts
 if (count($argv) == 1) {
 
-	Logs::stEcho("Lista de scripts:");
-	$scripts = Core::stGetClassesList("scripts");
-	foreach ($scripts as $script) {
-		Logs::stEcho($script);
-	}
+    Logs::stEcho("Lista de scripts:");
+    $scripts = CoreClasses::stGetClassesList("scripts");
+    foreach ($scripts as $script) {
+        Logs::stEcho($script);
+    }
 
-	die(0);
+    die(0);
 }
 
 $class = $argv[1];
