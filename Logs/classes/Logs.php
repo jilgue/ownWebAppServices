@@ -1,27 +1,26 @@
 <?php
 
-/**
- *
- */
+namespace ownWebAppServices\Logs\classes;
 
-class Logs {
+class Logs
+{
 
-	static function stEchoDate($msg) {
+    public static function stEchoDate($msg)
+    {
+        echo date('Y/m/d H:i:s ') . "$msg\n";
+        return;
+    }
 
-		echo date('Y/m/d H:i:s ') . "$msg\n";
-		return;
-	}
+    public static function stEcho($msg)
+    {
+        echo "$msg\n";
+        return;
+    }
 
-	static function stEcho($msg) {
-
-		echo "$msg\n";
-		return;
-	}
-
-	static function stFatal($mgs) {
-
-		Logs::stEcho($mgs);
-		// TODO hacer fatal de verdad xD
-		die;
-	}
+    public static function stFatal($mgs)
+    {
+        Logs::stEcho($mgs);
+        // TODO hacer fatal de verdad xD
+        die;
+    }
 }
